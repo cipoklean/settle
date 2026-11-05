@@ -6,7 +6,7 @@ _Chat to paid, helpers included._
 
 Built for the PayPal AI Hackathon 2026 with PayPal Sandbox, an LLM, AG Grid and AG Charts.
 
-- **Live demo:** `https://<your-deploy-url>/dashboard?judge` (Judge Mode, no login, nothing reaches PayPal)
+- **Live demo:** https://settle-rysn.onrender.com/dashboard?judge (Judge Mode, no login, nothing reaches PayPal)
 - **Video:** `<YouTube link>`
 
 ---
