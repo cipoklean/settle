@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: settle
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py serve
+    healthCheckPath: /dashboard
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: AI_BASE_URL
+        value: https://integrate.api.nvidia.com/v1
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        value: nvidia/nemotron-3.5-lightning-30b-a3b
+      - key: ADMIN_KEY
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: CLIENT_EMAIL
+        sync: false

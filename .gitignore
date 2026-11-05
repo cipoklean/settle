@@ -1,0 +1,12 @@
+.env
+*.db
+*.db-journal
+__pycache__/
+*.pyc
+.venv/
+venv/
+*_backup.*
+*_cmd.txt
+*.b64
+*.log
+cloudflared

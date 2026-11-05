@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5efe3">
+<title>Settle · Chat to paid, with PayPal + AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33/dist/ag-grid-community.min.noStyle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ag-charts-community@11/dist/umd/ag-charts-community.min.js"></script>
+<style>
+:root{
+  --paper:#f5efe3; --card:#fffdf8; --ink:#16181d; --ink2:#4a4f5c; --muted:#857d6e; --line:#e6dccb; --line2:#d9ccb4;
+  --blue:#0070e0; --navy:#003087; --yellow:#ffc439; --green:#0f7a4f; --red:#c8102e; --amber:#b86e00; --orange:#d9620b; --violet:#5b3fd0;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif; --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --r:16px; --shadow:0 1px 0 #fff inset,0 10px 30px -18px #3b2a0a55,0 2px 6px -3px #3b2a0a22;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+body{background-image:radial-gradient(#e9dfcc 0.8px,transparent 0.8px);background-size:18px 18px;min-height:100vh;padding-bottom:90px}
+a{color:var(--blue)}
+button{font:inherit;line-height:1.25;cursor:pointer;border:0;border-radius:999px;padding:9px 16px;font-weight:650;font-size:14px;background:var(--ink);color:#fff;white-space:nowrap;transition:transform .12s,box-shadow .12s,background .12s}
+button:hover{transform:translateY(-1px)} button:active{transform:none}
+button:disabled{opacity:.5;cursor:wait;transform:none}
+button.blue{background:var(--blue)} button.green{background:var(--green)} button.orange{background:var(--orange)} button.amber{background:var(--amber)}
+button.soft{background:#efe6d5;color:var(--ink)} button.soft:hover{background:#e8dcc5}
+button.line{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line2)}
+button.danger{background:#f8e3e3;color:var(--red)}
+button.sm{font-size:12.5px;padding:6px 12px}
+button.yellow{background:var(--yellow);color:#1d1600;box-shadow:0 6px 18px -8px #c08a00}
+input,textarea,select{font:inherit;font-size:14px;width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:none;transition:border .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 4px #0070e01f}
+textarea{min-height:110px;resize:vertical;line-height:1.45}
+label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+.muted{color:var(--muted)} .mono{font-family:var(--mono)}
+.late{color:var(--red);font-weight:700} .soon{color:var(--amber);font-weight:700}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:40;background:#f5efe3e8;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .in{max-width:1380px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:11px;margin-right:auto}
+.mark{width:38px;height:38px;border-radius:11px;background:var(--ink);color:var(--yellow);display:grid;place-items:center;font-family:var(--serif);font-weight:800;font-size:20px;transform:rotate(-4deg);box-shadow:3px 3px 0 var(--yellow)}
+.brand h1{font-family:var(--serif);font-weight:800;font-size:22px;margin:0;letter-spacing:-.02em;line-height:1}
+.brand small{display:block;font-size:12px;color:var(--muted);margin-top:3px;font-weight:500}
+.mode{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:#e3eefc;color:var(--navy)}
+.mode.demo{background:var(--yellow);color:#1d1600}
+.toggle{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--ink2);font-weight:600;cursor:pointer;user-select:none}
+.toggle input{display:none}
+.toggle i{width:34px;height:20px;border-radius:20px;background:var(--line2);position:relative;transition:.2s}
+.toggle i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+.toggle input:checked+i{background:var(--green)} .toggle input:checked+i::after{left:17px}
+.iconbtn{width:38px;height:38px;padding:0;display:grid;place-items:center;font-size:16px}
+
+main{max-width:1380px;margin:0 auto;padding:18px}
+
+/* ---------- hero + money ribbon ---------- */
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:6px 2px 14px}
+.hero h2{font-family:var(--serif);font-weight:700;font-size:clamp(26px,3.6vw,40px);letter-spacing:-.025em;line-height:1.05;margin:0;max-width:760px}
+.hero h2 em{font-style:italic;color:var(--blue)}
+.hero p{margin:6px 0 0;color:var(--ink2);font-size:14.5px;max-width:640px}
+.asof{font-size:12px;color:var(--muted);font-weight:600}
+.ribbon{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.node{position:relative;padding:16px 18px 18px;cursor:pointer;transition:background .15s;border-right:1px dashed var(--line2);min-width:0}
+.node:last-child{border-right:0}
+.node:hover{background:#fbf5ea}
+.node.active{background:#eef5ff}
+.node.active::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:var(--blue)}
+.node .k{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.node .k b{font-family:var(--mono);font-weight:700;background:#efe6d5;color:var(--ink);border-radius:6px;padding:1px 6px;letter-spacing:0}
+.node .v{font-family:var(--serif);font-weight:800;font-size:clamp(22px,2.4vw,32px);letter-spacing:-.03em;margin-top:6px;line-height:1;white-space:nowrap}
+.node .s{font-size:12.5px;color:var(--ink2);margin-top:6px;min-height:17px}
+.node .ic{position:absolute;right:14px;top:14px;font-size:20px;opacity:.9}
+.node:not(:last-child)::after{content:"";position:absolute;right:-9px;top:50%;width:16px;height:16px;margin-top:-8px;background:var(--card);border-top:1px dashed var(--line2);border-right:1px dashed var(--line2);transform:rotate(45deg);z-index:2}
+.flow{position:absolute;left:0;right:0;bottom:0;height:3px;background:repeating-linear-gradient(90deg,var(--blue) 0 10px,transparent 10px 22px);opacity:.35;animation:flow 1.4s linear infinite}
+@keyframes flow{to{background-position:22px 0}}
+.node.pulse{animation:pulse 1.2s ease 2}
+@keyframes pulse{50%{background:#fff4cf}}
+
+/* ---------- layout ---------- */
+.cols{display:grid;grid-template-columns:400px minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+.panel h3{font-family:var(--serif);font-weight:700;font-size:19px;letter-spacing:-.015em;margin:0;display:flex;align-items:center;gap:8px}
+.panel .sub{font-size:13px;color:var(--muted);margin-top:3px}
+.ph{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:6px}
+.stack{display:flex;flex-direction:column;gap:18px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.spacer{flex:1}
+.linkbtn{background:none;color:var(--blue);padding:0;font-weight:650;font-size:13px;border-radius:0}
+.linkbtn:hover{transform:none;text-decoration:underline}
+
+/* composer */
+.composer textarea{background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='26'%3E%3Cpath d='M0 25.5h10' stroke='%23efe6d5'/%3E%3C/svg%3E");background-attachment:local;line-height:26px;padding-top:4px}
+.go{width:100%;margin-top:12px;padding:12px 16px;font-size:15px;background:var(--blue);display:flex;justify-content:center;gap:8px}
+.think{margin-top:12px;border-radius:12px;background:#0f1320;color:#dfe6f5;padding:12px 14px;font-family:var(--mono);font-size:12.5px;display:none}
+.think.on{display:block}
+.think div{display:flex;gap:9px;align-items:center;padding:3px 0;opacity:.35;transition:opacity .25s}
+.think div.doing{opacity:1} .think div.done{opacity:.85}
+.think div i{width:14px;text-align:center;font-style:normal}
+.think div.doing i::before{content:"";display:inline-block;width:10px;height:10px;border:2px solid #7fb2ff;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+.think div.done i::before{content:"✓";color:#5fe0a3}
+.think div.wait i::before{content:"·"}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* feed */
+.feed{display:flex;flex-direction:column;gap:2px;max-height:560px;overflow:auto;margin:6px -6px -6px;padding:0 6px 6px}
+.ev{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:9px 8px;border-radius:12px;cursor:pointer;transition:background .15s}
+.ev:hover{background:#faf3e6}
+.ev .dot{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-size:16px;background:#efe6d5}
+.ev .msg{font-size:13.5px;line-height:1.38;color:var(--ink);overflow-wrap:anywhere}
+.ev .meta{font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:600;display:flex;gap:8px}
+.ev .tag{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.ev.new{animation:slide .5s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes slide{from{opacity:0;transform:translateY(-10px) scale(.98);background:#fff4cf}}
+.empty{padding:18px 6px;color:var(--muted);font-size:13.5px;text-align:center}
+
+/* tabs */
+.tabs{display:flex;gap:4px;background:#efe6d5;padding:4px;border-radius:999px;width:max-content;max-width:100%;overflow:auto}
+.tab{background:transparent;color:var(--ink2);padding:7px 14px;font-size:13.5px}
+.tab:hover{transform:none;color:var(--ink)}
+.tab.on{background:var(--card);color:var(--ink);box-shadow:0 1px 4px #3b2a0a22}
+.pane{display:none;margin-top:14px} .pane.on{display:block}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.search{position:relative;flex:1 1 200px;max-width:280px}
+.search input{padding-left:34px;border-radius:999px}
+.search::before{content:"⌕";position:absolute;left:13px;top:50%;transform:translateY(-52%);color:var(--muted);font-size:17px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:transparent;color:var(--ink2);box-shadow:inset 0 0 0 1.5px var(--line);padding:5px 11px;font-size:12.5px}
+.chip b{font-family:var(--mono);margin-left:3px;color:var(--muted)}
+.chip.on{background:var(--ink);color:#fff;box-shadow:none} .chip.on b{color:var(--yellow)}
+#grid{height:580px} #logGrid{height:520px}
+
+/* grid cells */
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;line-height:18px;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-review{background:#fff1d6;color:#8a5200}.s-pending{background:#e3eefc;color:#0b55b8}.s-approving{background:#ece7ff;color:var(--violet)}
+.s-sent{background:#e8eef8;color:#2f4a78}.s-overdue{background:#fbe2e5;color:var(--red)}.s-part{background:#ffead6;color:#a34800}
+.s-paid{background:#dcf3e7;color:#0b6a43}.s-failed{background:#fbe2e5;color:var(--red)}.s-cancelled{background:#ece9e3;color:#7d776c}
+.client{display:flex;align-items:center;gap:10px;line-height:1.2;height:100%}
+.av{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:800;flex:none}
+.client small{color:var(--muted);display:block;font-size:11.5px}
+.idlink{font-family:var(--mono);font-weight:700;text-decoration:none;color:var(--ink);background:#efe6d5;padding:2px 7px;border-radius:7px}
+.collected{line-height:1.15;width:100%}
+.collected small{color:var(--muted);font-size:11px}
+.bar{height:6px;background:#efe6d5;border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--green);border-radius:6px;transition:width .6s}
+.hchip{display:inline-block;background:#ece7ff;color:var(--violet);border-radius:7px;padding:1px 7px;font-size:11.5px;font-weight:650;margin-right:4px}
+.next{font-size:12.5px;color:var(--ink2)} .next b{color:var(--ink)}
+.acts{display:flex;gap:6px;align-items:center;height:100%}
+.ag-row.r-overdue{box-shadow:inset 4px 0 0 var(--red)} .ag-row.r-review{box-shadow:inset 4px 0 0 #e7a300} .ag-row.r-paid{box-shadow:inset 4px 0 0 var(--green)}
+.ag-row-pinned{font-weight:700}
+.ag-cell{display:flex;align-items:center} .ag-right-aligned-cell{justify-content:flex-end} .ag-cell-wrapper{width:100%}
+.evk{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+
+/* insights */
+.ins{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.stat{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fffaf1}
+.stat .l{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.stat .v{font-family:var(--serif);font-size:26px;font-weight:800;margin-top:4px;letter-spacing:-.02em}
+.charts{display:grid;grid-template-columns:1fr 1.35fr;gap:12px}
+.chart{height:300px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fffdf8}
+
+/* ---------- invoice sheet ---------- */
+#shade{position:fixed;inset:0;background:#1a140866;backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:50}
+#shade.on{opacity:1;pointer-events:auto}
+#sheet{position:fixed;top:0;right:0;height:100%;width:min(780px,100%);background:var(--paper);z-index:55;transform:translateX(104%);transition:transform .35s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 50px -20px #0005}
+#sheet.on{transform:none}
+.sh-top{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);background:#f5efe3f2}
+.sh-top h3{font-family:var(--serif);font-size:20px;margin:0;letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
+.sh-body{overflow:auto;padding:18px;flex:1}
+.paper{position:relative;background:#fff;border-radius:6px;padding:26px 26px 22px;box-shadow:0 1px 0 #e9dfcc,0 18px 40px -22px #3b2a0a66;overflow:hidden}
+.paper::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:10px;background:radial-gradient(circle at 7px 10px,var(--paper) 6px,transparent 6.5px) 0 0/14px 10px repeat-x}
+.pp-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.pp-head .t{font-family:var(--serif);font-weight:800;font-size:30px;letter-spacing:-.03em;line-height:1}
+.pp-head .n{font-family:var(--mono);color:var(--muted);font-size:13px;margin-top:6px}
+.pp-meta{display:grid;grid-template-columns:repeat(3,auto);gap:4px 22px;font-size:13px;text-align:right}
+.pp-meta span{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.pp-bill{margin:18px 0 12px;font-size:14px}
+.pp-bill span{display:block;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.pp-items{width:100%;border-collapse:collapse;font-size:14px}
+.pp-items th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:1.5px solid var(--ink);padding:6px 0}
+.pp-items td{padding:9px 0;border-bottom:1px dashed var(--line2)}
+.pp-items .r{text-align:right;font-family:var(--mono);white-space:nowrap;padding-left:14px}
+.pp-total{display:flex;justify-content:flex-end;align-items:baseline;gap:14px;margin-top:14px}
+.pp-total span{color:var(--muted);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.pp-total b{font-family:var(--serif);font-size:34px;font-weight:800;letter-spacing:-.03em}
+.ppbtn{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:var(--yellow);color:#111;border-radius:999px;padding:9px 18px;font-weight:800;text-decoration:none;font-size:14px}
+.ppbtn i{font-style:italic;font-family:var(--sans);font-weight:800;color:var(--navy)} .ppbtn i b{color:#009cde}
+.stamp{position:absolute;right:26px;top:92px;font-family:var(--mono);font-weight:700;font-size:26px;letter-spacing:.12em;padding:6px 14px;border:4px double currentColor;border-radius:10px;transform:rotate(-12deg);opacity:.85;pointer-events:none;mix-blend-mode:multiply;text-transform:uppercase}
+.stamp.slam{animation:slam .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes slam{0%{transform:rotate(-12deg) scale(3);opacity:0}60%{opacity:.95}100%{transform:rotate(-12deg) scale(1);opacity:.85}}
+.st-paid{color:var(--green)} .st-over{color:var(--red)} .st-draft{color:#7a8aa8} .st-sent{color:var(--blue)} .st-review{color:#c27c00} .st-void{color:#9a9184} .st-part{color:var(--orange)}
+.split{margin-top:18px}
+.split .lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px}
+.sbar{display:flex;height:40px;border-radius:12px;overflow:hidden;background:#efe6d5;font-size:12.5px;font-weight:700}
+.sbar div{display:flex;align-items:center;justify-content:center;color:#fff;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:flex .5s;min-width:0}
+.sbar .you{background:var(--ink)}
+.sbar .over{background:var(--red)}
+.split .po{font-size:12.5px;color:var(--ink2);margin-top:7px}
+.coin{position:fixed;z-index:70;font-size:22px;pointer-events:none;transition:transform 1s cubic-bezier(.3,.7,.3,1),opacity 1s}
+.errors{background:#fff1d6;border:1px solid #f0cf86;color:#6d4300;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:14px}
+.sect{font-family:var(--serif);font-weight:700;font-size:17px;margin:22px 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.dgrid{height:200px}
+.acts2{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;position:sticky;bottom:-18px;background:linear-gradient(transparent,var(--paper) 30%);padding:14px 0 6px}
+.steps{list-style:none;margin:0;padding:0;position:relative}
+.steps li{position:relative;padding:0 0 16px 34px}
+.steps li::before{content:"";position:absolute;left:10px;top:22px;bottom:0;width:2px;background:var(--line2)}
+.steps li:last-child::before{display:none}
+.steps li .b{position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;background:#efe6d5;border:2px solid var(--line2);display:grid;place-items:center;font-size:11px;color:#fff}
+.steps li.done .b{background:var(--green);border-color:var(--green)} .steps li.done .b::before{content:"✓"}
+.steps li.now .b{background:#fff;border-color:var(--blue);box-shadow:0 0 0 4px #0070e022}
+.steps li.bad .b{background:var(--red);border-color:var(--red)} .steps li.bad .b::before{content:"!"}
+.steps li .h{font-weight:700;font-size:14px} .steps li .w{font-size:12.5px;color:var(--muted);margin-top:2px}
+.bubble{background:#dcf8c6;border-radius:4px 14px 14px 14px;padding:10px 12px 18px;font-size:14px;line-height:1.45;white-space:pre-wrap;position:relative;max-width:92%;box-shadow:0 1px 1px #0001}
+.bubble::after{content:"✓✓";position:absolute;right:10px;bottom:3px;font-size:10px;color:#34b7f1}
+details{margin-top:10px} summary{cursor:pointer;font-size:13px;font-weight:650;color:var(--ink2)}
+#tlGrid{height:240px;margin-top:8px}
+
+/* ---------- toasts, judge bar, welcome ---------- */
+#toasts{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;align-items:center;width:max-content;max-width:92vw}
+body.judging #toasts{bottom:96px}
+.toast{background:var(--ink);color:#fff;padding:10px 16px;border-radius:14px;font-size:13.5px;box-shadow:0 12px 30px -12px #0008;animation:slide .35s}
+.toast.err{background:var(--red)} .toast.ok{background:var(--green)}
+#judge{position:fixed;left:50%;bottom:16px;transform:translate(-50%,160%);z-index:95;width:min(760px,calc(100% - 20px));background:#0f1320;color:#fff;border-radius:20px;padding:12px 12px 12px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 24px 50px -16px #000a;transition:transform .4s cubic-bezier(.2,.9,.3,1.1)}
+#judge.on{transform:translate(-50%,0)}
+#judge .cap{flex:1;min-width:0}
+#judge .cap .k{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
+#judge .cap .t{font-family:var(--serif);font-size:17px;font-weight:700;margin-top:2px;line-height:1.25}
+#judge .dots{display:flex;gap:4px;margin-top:7px} #judge .dots i{width:16px;height:4px;border-radius:4px;background:#ffffff2e;transition:background .3s} #judge .dots i.on{background:var(--yellow)}
+#judge button{background:#ffffff1a;color:#fff;padding:8px 12px} #judge button.y{background:var(--yellow);color:#111}
+.spot{position:relative;z-index:30;box-shadow:0 0 0 3px var(--yellow),0 0 0 9px #ffc43955 !important;border-radius:16px;transition:box-shadow .3s}
+#welcome{position:fixed;inset:0;z-index:99;background:#1a1408aa;backdrop-filter:blur(6px);display:none;place-items:center;padding:18px}
+#welcome.on{display:grid}
+.wcard{background:var(--card);border-radius:24px;max-width:520px;width:100%;padding:28px;box-shadow:0 30px 80px -20px #000a;position:relative;overflow:hidden}
+.wcard::before{content:"";position:absolute;right:-60px;top:-60px;width:200px;height:200px;border-radius:50%;background:var(--yellow);opacity:.35}
+.wcard h2{font-family:var(--serif);font-size:32px;letter-spacing:-.03em;margin:14px 0 8px;line-height:1.05;position:relative}
+.wcard p{color:var(--ink2);margin:0 0 18px;line-height:1.5;position:relative}
+.wflow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;font-size:12.5px;font-weight:700;position:relative}
+.wflow span{background:#efe6d5;border-radius:999px;padding:5px 10px} .wflow em{font-style:normal;color:var(--muted);align-self:center}
+.wcard .row button{flex:1;padding:12px}
+
+@media (max-width:1100px){ .cols{grid-template-columns:1fr} .feed{max-height:380px} }
+@media (max-width:820px){
+  .ribbon{grid-template-columns:repeat(5,minmax(150px,1fr));overflow-x:auto;scroll-snap-type:x mandatory}
+  .node{scroll-snap-align:start}
+  .ins{grid-template-columns:repeat(2,1fr)} .charts{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr} #grid{height:480px}
+  .pp-meta{grid-template-columns:repeat(3,auto);text-align:left}
+  .brand small{display:none} .top{position:static} .top .in{gap:8px;padding:10px 12px} main{padding:12px}
+  .mode,.toggle span{display:none} .brand h1{font-size:19px} .mark{width:34px;height:34px;font-size:18px}
+  .top button{padding:7px 11px;font-size:13px} .top .iconbtn{width:34px;height:34px;padding:0}
+  .node .ic{display:none}
+  .pp-items .u{display:none} .pp-items{font-size:13.5px} .paper{padding:20px 18px 18px}
+  .stamp{top:18px;right:16px;bottom:auto;font-size:17px;border-width:3px;padding:4px 10px}
+  .sbar .amt{display:none}
+  .sh-top h3{font-size:17px} .sh-body{padding:14px}
+  #judge{padding:10px 10px 10px 14px;gap:8px;bottom:10px} #judge .cap .t{font-size:14.5px} #judge .cap .k{font-size:10px} #jpause{display:none}
+  #judge button{padding:8px 11px}
+  body.judging #toasts{bottom:120px}
+}
+@media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important} }
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <div class="brand"><div class="mark">S</div><div><h1>Settle</h1><small>Client chat → PayPal invoice → paid → helpers paid</small></div></div>
+  <span class="mode" id="modeTag">PayPal Sandbox</span>
+  <button class="yellow" id="judgeBtn" onclick="startTour()">▶ Judge Mode</button>
+  <button class="line sm" id="runBtn" onclick="runAgent()" title="Check PayPal for payments, pay helpers, nudge overdue clients">⟳ Run agent</button>
+  <label class="toggle" title="Run the agent every minute while this page is open" style="margin:0;text-transform:none;letter-spacing:0;font-size:13px"><input type="checkbox" id="auto"><i></i><span>Autopilot</span></label>
+  <button class="line iconbtn" onclick="setKey()" title="Admin key (live sandbox)">🔑</button>
+</div></header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h2>Paste the chat. <em>The agent</em> invoices, chases, and splits the money.</h2>
+      <p>AI drafts the invoice from a client conversation, code checks it, you approve, PayPal collects, and helpers get their share the moment the client pays in full.</p>
+    </div>
+    <span class="asof" id="asof"></span>
+  </section>
+
+  <section class="ribbon" id="ribbon">
+    <div class="node" data-stage="review"><span class="ic">✨</span><div class="k">AI drafted <b id="c-review">0</b></div><div class="v" id="v-review">$0</div><div class="s" id="s-review">waiting for a quick fix</div></div>
+    <div class="node" data-stage="approve"><span class="ic">✍️</span><div class="k">Your approval <b id="c-approve">0</b></div><div class="v" id="v-approve">$0</div><div class="s" id="s-approve">nothing sends without you</div></div>
+    <div class="node" data-stage="collect"><span class="ic">📨</span><div class="k">With client <b id="c-collect">0</b></div><div class="v" id="v-collect">$0</div><div class="s" id="s-collect">outstanding</div></div>
+    <div class="node" data-stage="done" id="rb-done"><span class="ic">💰</span><div class="k">Collected <b id="c-done">0</b></div><div class="v" id="v-done" style="color:var(--green)">$0</div><div class="s" id="s-done">verified in PayPal</div></div>
+    <div class="node" data-stage="helpers" id="rb-help"><span class="ic">🤝</span><div class="k">Helpers paid <b id="c-help">0</b></div><div class="v" id="v-help" style="color:var(--violet)">$0</div><div class="s" id="s-help">via PayPal Payouts</div></div>
+    <div class="flow"></div>
+  </section>
+
+  <div class="cols">
+    <div class="stack">
+      <section class="panel composer" id="composer">
+        <div class="ph"><div><h3>New invoice from a chat</h3><div class="sub">WhatsApp, email, DM: paste where the client agreed the work.</div></div>
+          <button class="linkbtn" onclick="sample()">Try a sample</button></div>
+        <label for="chat">Client's message</label>
+        <textarea id="chat" placeholder="“Hi! Happy with the plan: logo pack for $300 and 4 social templates at $50 each. Invoice amaka@lagosbloom.co…”"></textarea>
+        <label for="note">Private note · helpers to pay from this invoice</label>
+        <input id="note" placeholder="split 20% to ada@example.com">
+        <button class="go" id="draftBtn" onclick="draftFromChat()">✨ Draft invoice with AI</button>
+        <div class="think" id="think"></div>
+      </section>
+      <section class="panel" id="feedPanel">
+        <div class="ph"><div><h3><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px #0f7a4f22"></span> Agent feed</h3><div class="sub">Every AI, PayPal and payout action, live.</div></div>
+          <button class="linkbtn" onclick="showTab('log')">Full log</button></div>
+        <div class="feed" id="feed"><div class="empty">The agent hasn't done anything yet.</div></div>
+      </section>
+    </div>
+
+    <section class="panel" id="workPanel">
+      <div class="row" style="justify-content:space-between">
+        <div class="tabs"><button class="tab on" data-tab="ledger" onclick="showTab('ledger')">Ledger</button><button class="tab" data-tab="log" onclick="showTab('log')">Activity log</button><button class="tab" data-tab="ins" onclick="showTab('ins')">Insights</button></div>
+        <span class="muted" style="font-size:12.5px">Built on AG Grid + AG Charts</span>
+      </div>
+      <div class="pane on" id="pane-ledger">
+        <div class="toolbar" style="margin-top:14px">
+          <div class="search"><input id="q" placeholder="Search client, item, email…" oninput="grid.setGridOption('quickFilterText', this.value)"></div>
+          <div class="chips" id="chips"></div>
+        </div>
+        <div class="toolbar">
+          <button class="soft sm" onclick="bulk('approve')">✍️ Approve selected</button>
+          <button class="soft sm" onclick="bulk('nudge')">🔔 Nudge selected</button>
+          <span class="spacer"></span>
+          <button class="line sm" onclick="exportCsv()">⬇ CSV</button>
+          <button class="line sm" onclick="resetCols()">Reset columns</button>
+        </div>
+        <div id="grid"></div>
+      </div>
+      <div class="pane" id="pane-log">
+        <div class="toolbar"><div class="search"><input placeholder="Filter the log…" oninput="logGrid.setGridOption('quickFilterText', this.value)"></div></div>
+        <div id="logGrid"></div>
+      </div>
+      <div class="pane" id="pane-ins">
+        <div class="ins">
+          <div class="stat"><div class="l">AI drafts</div><div class="v" id="i-ai">0</div></div>
+          <div class="stat"><div class="l">AI nudges sent</div><div class="v" id="i-nudge">0</div></div>
+          <div class="stat"><div class="l">Avg days to paid</div><div class="v" id="i-days">–</div></div>
+          <div class="stat"><div class="l">Overdue now</div><div class="v" id="i-late" style="color:var(--red)">$0</div></div>
+        </div>
+        <div class="charts"><div class="chart" id="donut"></div><div class="chart" id="bars"></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- invoice sheet -->
+<div id="shade" onclick="closeSheet()"></div>
+<aside id="sheet" aria-hidden="true">
+  <div class="sh-top"><h3 id="sTitle">Invoice</h3><span id="sPill"></span><span class="spacer"></span><button class="line iconbtn" onclick="closeSheet()" aria-label="Close">✕</button></div>
+  <div class="sh-body" id="sBody">
+    <div class="paper" id="paper"></div>
+    <div id="split" class="split"></div>
+    <div id="sErr"></div>
+    <div id="editor">
+      <div class="sect">Edit before sending</div>
+      <div class="fields">
+        <div><label>Client name</label><input id="f-name" oninput="livePaper()"></div>
+        <div><label>Client email</label><input id="f-email" type="email" oninput="livePaper()"></div>
+        <div><label>Currency</label><select id="f-cur" onchange="livePaper()"><option>USD</option><option>EUR</option><option>GBP</option><option>CAD</option><option>AUD</option></select></div>
+        <div><label>Due date</label><input id="f-due" type="date" onchange="livePaper()"></div>
+      </div>
+      <div class="sect" style="font-size:15px">Line items <button class="soft sm" onclick="addItem()">+ Line</button></div>
+      <div id="itemsGrid" class="dgrid"></div>
+      <div class="sect" style="font-size:15px">Helpers paid from this invoice <button class="soft sm" onclick="addHelper()">+ Helper</button></div>
+      <div id="helpersGrid" class="dgrid"></div>
+    </div>
+    <div class="acts2" id="sActs"></div>
+    <div class="sect">Lifecycle</div>
+    <ul class="steps" id="steps"></ul>
+    <details><summary>All events for this invoice</summary><div id="tlGrid"></div></details>
+    <div class="sect">Where it started</div>
+    <div class="bubble" id="sChat"></div>
+  </div>
+</aside>
+
+<div id="toasts"></div>
+
+<div id="judge" role="status" aria-live="polite">
+  <div class="cap"><div class="k" id="jk">Judge Mode · demo data</div><div class="t" id="jt">…</div><div class="dots" id="jdots"></div></div>
+  <button id="jpause" onclick="pauseTour()">❚❚</button>
+  <button class="y" onclick="tourNext()">Next ›</button>
+  <button onclick="exitDemo()" title="Exit Judge Mode">✕</button>
+</div>
+
+<div id="welcome"><div class="wcard">
+  <div class="mark" style="position:relative">S</div>
+  <h2>Get paid for the work you already agreed.</h2>
+  <p>Settle reads a client chat, drafts the invoice with AI, sends it through PayPal after you approve, nudges late payers, and pays your helpers their share automatically.</p>
+  <div class="wflow"><span>💬 Chat</span><em>→</em><span>✨ AI draft</span><em>→</em><span>✍️ You approve</span><em>→</em><span>📨 PayPal</span><em>→</em><span>💰 Paid</span><em>→</em><span>🤝 Helpers paid</span></div>
+  <div class="row"><button class="yellow" onclick="closeWelcome();startTour()">▶ Watch the 40-second demo</button><button class="line" onclick="closeWelcome();setKey()">Connect live sandbox</button></div>
+  <div style="text-align:center;margin-top:12px;position:relative"><button class="linkbtn" onclick="closeWelcome();enterDemo(false)">or explore demo data on your own</button></div>
+</div></div>
+
+<script>
+/* ============ basics ============ */
+const EDITABLE = ["needs_review", "pending", "send_failed"], UNPAID = ["sent", "partially_paid"];
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const key = () => localStorage.getItem("adminKey") || "";
+let MODE = "live";                       // "live" talks to the server, "demo" runs the in-browser sandbox
+function setKey(){
+  const k = prompt("Admin key for your live sandbox (ADMIN_KEY in .env)", key());
+  if (k === null) return;
+  localStorage.setItem("adminKey", k.trim());
+  if (MODE === "demo") exitDemo(); else refresh();
+}
+function toast(text, cls){ const t = document.createElement("div"); t.className = "toast " + (cls || ""); t.textContent = text; $("toasts").append(t); setTimeout(() => t.remove(), 5000); }
+async function api(path, opts = {}){
+  if (MODE === "demo") return Demo.call(path, opts);
+  const r = await fetch(path, {...opts, headers: {"Content-Type": "application/json", "X-Admin-Key": key()}});
+  const j = await r.json().catch(() => ({}));
+  if (r.status === 401){ const e = new Error("Bad admin key"); e.auth = true; throw e; }
+  if (!r.ok) throw new Error(j.detail || ("HTTP " + r.status));
+  return j;
+}
+const today = () => new Date(new Date().toDateString());
+const isoIn = n => { const d = new Date(Date.now() + n * 864e5); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+const daysLate = d => d ? Math.round((today() - new Date(d + "T00:00:00")) / 864e5) : 0;
+const fmt = (v, c) => v == null || isNaN(v) ? "" : new Intl.NumberFormat("en-US", {style: "currency", currency: c || "USD"}).format(v);
+const fmt0 = (v, c) => fmt(v, c).replace(/\.00$/, "");
+const ago = ts => { if (!ts) return ""; const s = Date.now() / 1000 - ts; return s < 60 ? "just now" : s < 3600 ? Math.floor(s / 60) + "m ago" : s < 86400 ? Math.floor(s / 3600) + "h ago" : Math.floor(s / 86400) + "d ago"; };
+const when = ts => ts ? new Date(ts * 1000).toLocaleString([], {month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"}) : "";
+const shortDate = d => d ? new Date(d + "T00:00:00").toLocaleDateString([], {month: "short", day: "numeric", year: "numeric"}) : "—";
+const helperPct = d => (d.data.splits || []).reduce((s, x) => s + Number(x.percent || 0), 0);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* One place that turns raw state into what a human sees. Everything reads this. */
+function view(d){
+  const late = daysLate(d.data.due_date), paid = Number(d.paid_amount || 0);
+  const unpaid = UNPAID.includes(d.status);
+  let label, cls, stage, stamp, stCls;
+  switch (d.status){
+    case "needs_review": label = "Needs review"; cls = "s-review"; stage = "review"; stamp = "Needs review"; stCls = "st-review"; break;
+    case "pending": label = "Awaiting approval"; cls = "s-pending"; stage = "approve"; stamp = "Draft"; stCls = "st-draft"; break;
+    case "approving": label = "Sending…"; cls = "s-approving"; stage = "approve"; stamp = "Sending"; stCls = "st-sent"; break;
+    case "send_failed": label = "Send failed"; cls = "s-failed"; stage = "approve"; stamp = "Failed"; stCls = "st-over"; break;
+    case "sent": label = late > 0 ? `Overdue ${late}d` : "Sent"; cls = late > 0 ? "s-overdue" : "s-sent"; stage = "collect"; stamp = late > 0 ? "Overdue" : "Sent"; stCls = late > 0 ? "st-over" : "st-sent"; break;
+    case "partially_paid": label = late > 0 ? `Part paid · ${late}d late` : "Part paid"; cls = late > 0 ? "s-overdue" : "s-part"; stage = "collect"; stamp = "Part paid"; stCls = "st-part"; break;
+    case "paid": label = d.payout_status === "sent" ? "Paid · helpers paid" : d.payout_status === "failed" ? "Paid · payout failed" : "Paid"; cls = d.payout_status === "failed" ? "s-failed" : "s-paid"; stage = "done"; stamp = "Paid"; stCls = "st-paid"; break;
+    case "cancelled": label = "Cancelled"; cls = "s-cancelled"; stage = "cancelled"; stamp = "Void"; stCls = "st-void"; break;
+    default: label = d.status; cls = "s-sent"; stage = "other"; stamp = d.status; stCls = "st-draft";
+  }
+  return {label, cls, stage, stamp, stCls, late, paid, unpaid, overdue: unpaid && late > 0,
+          outstanding: unpaid ? Math.max(0, d.total - paid) : 0, helperAmount: d.total * helperPct(d) / 100};
+}
+/* What the agent will do next for this invoice: makes the autonomy visible. */
+function agentNext(d){
+  const v = view(d);
+  switch (d.status){
+    case "needs_review": return `<b>You:</b> fix ${esc((d.error || "details").split(";")[0])}`;
+    case "pending": return "<b>You:</b> approve to send";
+    case "approving": return "Sending to PayPal…";
+    case "send_failed": return "<b>You:</b> retry send";
+    case "sent": case "partially_paid": {
+      if (!v.overdue) return `Watching for payment · nudges after ${shortDate(d.data.due_date).replace(/, \d{4}$/, "")}`;
+      const gap = d.last_reminded ? 3 - (Date.now() / 1000 - d.last_reminded) / 86400 : 0;
+      return gap > 0 ? `Next AI nudge in ${Math.ceil(gap)}d` : "<b>AI nudge due now</b>";
+    }
+    case "paid": return !(d.data.splits || []).length || d.payout_status === "sent" || d.payout_status === "none" ? "Done ✓" :
+                        d.payout_status === "failed" ? "<b>Payout failed</b> · retries on next run" : "Paying helpers…";
+    default: return "—";
+  }
+}
+function countUp(el, to, cur){
+  const from = Number(el.dataset.v || 0); el.dataset.v = to;
+  if (from === to){ el.textContent = fmt0(to, cur); return; }
+  const t0 = performance.now(), dur = 700;
+  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt0(from + (to - from) * e, cur); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+/* ============ AG Grid theme ============ */
+const theme = agGrid.themeQuartz.withParams({
+  accentColor: "#0070e0", backgroundColor: "#fffdf8", foregroundColor: "#16181d", borderColor: "#ebe2d2",
+  headerBackgroundColor: "#f6efe2", headerTextColor: "#5f5748", headerFontWeight: 700,
+  rowHoverColor: "#fbf4e6", selectedRowBackgroundColor: "#e7f0fd", oddRowBackgroundColor: "#fffaf2",
+  fontFamily: "Inter,system-ui,sans-serif", fontSize: 13, spacing: 6, wrapperBorderRadius: 14, borderRadius: 8
+});
+const COLORS = ["#0070e0", "#5b3fd0", "#d9620b", "#0f7a4f", "#c8102e", "#0e8ca8", "#8a5200", "#b0306a"];
+const avatar = name => { const n = (name || "?").trim() || "?"; let h = 0; for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return `<span class="av" style="background:${COLORS[h % COLORS.length]}">${esc(n.split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase())}</span>`; };
+const canEdit = p => !p.node.rowPinned && EDITABLE.includes(p.data.status);
+
+let stageFilter = "all";
+const STAGES = [["all", "All"], ["review", "Needs review"], ["approve", "Awaiting you"], ["collect", "With client"], ["overdue", "Overdue"], ["done", "Paid"], ["cancelled", "Cancelled"]];
+
+const columnDefs = [
+  {headerName: "#", field: "id", width: 84, pinned: "left", cellDataType: "number", sort: "desc",
+   cellRenderer: p => p.node.rowPinned ? "Σ" : `<a class="idlink" href="#" onclick="openSheet(${p.value});return false">${p.value}</a>`},
+  {headerName: "Client", colId: "client", field: "data.client_name", minWidth: 200, flex: 1.3, editable: canEdit, cellDataType: "text", headerTooltip: "Tap to edit until approved",
+   cellRenderer: p => p.node.rowPinned ? `<b>${esc(p.value)}</b>` : `<div class="client">${avatar(p.value || p.data.data.client_email)}<div>${esc(p.value || "—")}<small>${esc(p.data.data.client_email || "no email yet")}</small></div></div>`,
+   getQuickFilterText: p => `${p.value} ${p.data.data.client_email} ${(p.data.data.items || []).map(i => i.name).join(" ")}`},
+  {headerName: "Email", colId: "email", field: "data.client_email", minWidth: 180, editable: canEdit, cellDataType: "text", hide: true},
+  {headerName: "Status", colId: "status", minWidth: 170, enableCellChangeFlash: true, cellDataType: false, filter: "agTextColumnFilter",
+   valueGetter: p => p.node.rowPinned ? "" : view(p.data).label,
+   cellRenderer: p => p.node.rowPinned ? "" : `<span class="pill ${view(p.data).cls}">${esc(p.value)}</span>`,
+   tooltipValueGetter: p => p.node.rowPinned ? null : (p.data.error || p.data.payout_error || null)},
+  {headerName: "Total", colId: "total", field: "total", type: ["money", "rightAligned"], width: 120, valueFormatter: p => fmt(p.value, p.data?.data?.currency)},
+  {headerName: "Collected", colId: "collected", minWidth: 160, enableCellChangeFlash: true, cellDataType: "number",
+   valueGetter: p => Number(p.data.paid_amount || 0),
+   cellRenderer: p => { const t = p.data.total || 0, v = p.value || 0, pct = t ? Math.min(100, v / t * 100) : 0;
+     return `<div class="collected">${fmt(v, p.data?.data?.currency)} <small>of ${fmt(t, p.data?.data?.currency)}</small><div class="bar"><i style="width:${pct}%"></i></div></div>`; }},
+  {headerName: "Outstanding", colId: "outstanding", type: ["money", "rightAligned"], width: 132,
+   valueGetter: p => p.node.rowPinned ? p.data.outstanding : view(p.data).outstanding,
+   valueFormatter: p => p.value ? fmt(p.value, p.data?.data?.currency) : "–", cellClassRules: {late: p => !p.node.rowPinned && view(p.data).overdue}},
+  {headerName: "Agent's next step", colId: "next", minWidth: 230, flex: 1, wrapText: true, cellStyle: {lineHeight: "1.3", display: "flex", alignItems: "center"}, cellDataType: false, sortable: false, enableCellChangeFlash: true,
+   valueGetter: p => p.node.rowPinned ? "" : agentNext(p.data).replace(/<[^>]+>/g, ""),
+   cellRenderer: p => p.node.rowPinned ? "" : `<span class="next">${agentNext(p.data)}</span>`},
+  {headerName: "Due", colId: "due", field: "data.due_date", width: 158, editable: canEdit, cellDataType: "dateString",
+   cellRenderer: p => { if (p.node.rowPinned || !p.value) return ""; const v = view(p.data), l = v.late, dd = shortDate(p.value).replace(/, \d{4}$/, "");
+     if (!v.unpaid && !EDITABLE.includes(p.data.status)) return `<span class="muted">${dd}</span>`;
+     return l > 0 ? `${dd} · <span class="late">${l}d late</span>` : l > -4 ? `${dd} · <span class="soon">${l === 0 ? "today" : "in " + -l + "d"}</span>` : `${dd} · <span class="muted">in ${-l}d</span>`; }},
+  {headerName: "Items", colId: "items", minWidth: 180, flex: 1, cellDataType: false,
+   valueGetter: p => p.node.rowPinned ? "" : (p.data.data.items || []).map(i => i.name).join(", "),
+   tooltipValueGetter: p => p.node.rowPinned ? null : (p.data.data.items || []).map(i => `${i.quantity} × ${i.name} @ ${i.unit_amount}`).join("\n")},
+  {headerName: "Helpers", colId: "helpers", minWidth: 170, cellDataType: false,
+   valueGetter: p => p.node.rowPinned ? "" : (p.data.data.splits || []).map(s => `${s.email} ${s.percent}%`).join(", "),
+   cellRenderer: p => p.node.rowPinned ? "" : ((p.data.data.splits || []).map(s => `<span class="hchip" title="${esc(s.email)}">${esc(String(s.email).split("@")[0])} ${esc(s.percent)}%</span>`).join("") || `<span class="muted">none</span>`)},
+  {headerName: "Helper payout", colId: "payout", width: 150, cellDataType: "number",
+   valueGetter: p => p.node.rowPinned ? p.data.helperAmount : view(p.data).helperAmount,
+   cellRenderer: p => { if (p.node.rowPinned) return fmt(p.value); if (!p.value) return `<span class="muted">–</span>`;
+     const s = p.data.payout_status; const icon = s === "sent" ? "✅" : s === "failed" ? "⚠️" : s === "sending" ? "⏳" : "🕓";
+     return `${icon} ${fmt(p.value, p.data.data.currency)}`; },
+   tooltipValueGetter: p => p.node.rowPinned ? null : (p.data.payout_batch_id ? "PayPal Payouts batch " + p.data.payout_batch_id : p.data.payout_error || "Pays out automatically after full payment")},
+  {headerName: "Nudges", colId: "nudges", width: 110, cellDataType: "number",
+   valueGetter: p => p.node.rowPinned ? null : Number(p.data.reminders || 0),
+   cellRenderer: p => p.node.rowPinned ? "" : (p.value ? `🔔 ${p.value} <small class="muted">${ago(p.data.last_reminded)}</small>` : `<span class="muted">0</span>`)},
+  {headerName: "PayPal invoice", colId: "paypal", field: "paypal_id", minWidth: 210, cellDataType: "text",
+   cellRenderer: p => p.node.rowPinned || !p.value ? "" : `<span class="mono" style="font-size:12px">${esc(p.value)}</span>${p.data.pay_url && p.data.pay_url !== "#" ? ` <a href="${esc(p.data.pay_url)}" target="_blank" rel="noopener" title="Client's PayPal pay page">↗</a>` : ""}`},
+  {headerName: "Created", colId: "created", field: "created_at", width: 118, cellDataType: "number",
+   valueFormatter: p => p.node.rowPinned ? "" : ago(p.value), tooltipValueGetter: p => p.node.rowPinned ? null : when(p.value)},
+  {headerName: "", colId: "actions", width: 172, pinned: "right", sortable: false, filter: false, resizable: false, cellDataType: false,
+   cellRenderer: p => { if (p.node.rowPinned) return ""; const s = p.data.status, v = view(p.data), id = p.data.id; let b = "";
+     if (s === "needs_review") b += `<button class="sm amber" onclick="openSheet(${id})">Fix</button>`;
+     if (s === "pending" || s === "send_failed") b += `<button class="sm blue" onclick="approve(${id})">${s === "send_failed" ? "Retry" : "Approve"}</button>`;
+     if (v.unpaid) b += `<button class="sm orange" onclick="nudge(${id})">Nudge</button>`;
+     b += `<button class="sm soft" onclick="openSheet(${id})">Open</button>`;
+     return `<div class="acts">${b}</div>`; }}
+];
+
+const grid = agGrid.createGrid($("grid"), {
+  theme, columnDefs, rowData: [],
+  columnTypes: {money: {cellDataType: "number", filter: "agNumberColumnFilter"}},
+  defaultColDef: {resizable: true, sortable: true, filter: true},
+  getRowId: p => String(p.data.id),
+  rowSelection: {mode: "multiRow", checkboxes: true, headerCheckbox: true, enableClickSelection: false},
+  selectionColumnDef: {pinned: "left", width: 48},
+  rowHeight: 54, headerHeight: 42, tooltipShowDelay: 250, singleClickEdit: true, stopEditingWhenCellsLoseFocus: true,
+  animateRows: true, pagination: true, paginationPageSize: 20, paginationPageSizeSelector: [10, 20, 50, 100],
+  overlayNoRowsTemplate: '<div style="padding:24px;color:#857d6e;font-size:14px">No invoices yet. Paste a client chat and let the AI draft one.</div>',
+  rowClassRules: {"r-overdue": p => !p.node.rowPinned && view(p.data).overdue,
+                  "r-review": p => !p.node.rowPinned && p.data.status === "needs_review",
+                  "r-paid": p => !p.node.rowPinned && p.data.status === "paid"},
+  isExternalFilterPresent: () => stageFilter !== "all",
+  doesExternalFilterPass: n => { const v = view(n.data);
+    return stageFilter === "overdue" ? v.overdue : stageFilter === "helpers" ? n.data.payout_status === "sent" : v.stage === stageFilter; },
+  onCellValueChanged: async e => {
+    const map = {"data.client_name": "client_name", "data.client_email": "client_email", "data.due_date": "due_date"};
+    const k = map[e.colDef.field]; if (!k || e.newValue === e.oldValue) return;
+    try { const r = await api(`/drafts/${e.data.id}/edit`, {method: "POST", body: JSON.stringify({[k]: e.newValue ?? ""})});
+          toast(r.errors.length ? "Saved. Still needs: " + r.errors.join("; ") : `#${e.data.id} saved and ready to approve`, r.errors.length ? "" : "ok"); }
+    catch (err){ toast(err.message, "err"); }
+    refresh();
+  },
+  onColumnMoved: saveCols, onColumnResized: e => e.finished && saveCols(), onSortChanged: saveCols, onColumnVisible: saveCols,
+  onGridReady: e => {
+    const s = localStorage.getItem("colState3");
+    if (s){ try { e.api.applyColumnState({state: JSON.parse(s), applyOrder: true}); } catch {} }
+    else if (window.innerWidth < 700) e.api.setColumnsVisible(["items", "helpers", "paypal", "created", "nudges", "outstanding"], false);
+  }
+});
+function saveCols(){ if (MODE === "live") localStorage.setItem("colState3", JSON.stringify(grid.getColumnState())); }
+function resetCols(){ localStorage.removeItem("colState3"); grid.resetColumnState(); }
+function exportCsv(){
+  grid.exportDataAsCsv({fileName: `invoices-${isoIn(0)}.csv`,
+    columnKeys: ["id", "client", "email", "status", "next", "total", "collected", "outstanding", "due", "items", "helpers", "payout", "nudges", "paypal"],
+    processCellCallback: p => p.column.getColId() === "due" ? (p.value || "") : p.value});
+}
+
+/* stage chips + ribbon nodes share one filter */
+function setStage(s){
+  stageFilter = s;
+  document.querySelectorAll(".chip").forEach(c => c.classList.toggle("on", c.dataset.stage === s));
+  document.querySelectorAll(".node").forEach(c => c.classList.toggle("active", c.dataset.stage === s));
+  grid.onFilterChanged();
+}
+$("chips").innerHTML = STAGES.map(([k, l]) => `<button class="chip${k === "all" ? " on" : ""}" data-stage="${k}" onclick="setStage('${k}')">${l}<b id="n-${k}"></b></button>`).join("");
+document.querySelectorAll(".node").forEach(n => n.onclick = () => { showTab("ledger"); setStage(stageFilter === n.dataset.stage ? "all" : n.dataset.stage); });
+
+/* ============ tabs ============ */
+function showTab(t){
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "pane-" + t));
+  if (t === "ins") setTimeout(() => drawCharts(), 30);
+}
+
+/* ============ activity log grid + feed ============ */
+const EV = {ai: ["✨", "#5b3fd0", "AI draft"], review: ["🩹", "#8a5200", "Needs review"], edited: ["✏️", "#5f5748", "Edited"], drafted: ["📝", "#5f5748", "Drafted"],
+  approved: ["✍️", "#0b55b8", "Approved"], paypal: ["🅿️", "#003087", "PayPal"], sent: ["📨", "#003087", "Sent"], partially_paid: ["🌓", "#a34800", "Part paid"],
+  paid: ["💰", "#0b6a43", "Paid"], payout: ["🤝", "#5b3fd0", "Payout"], nudged: ["🔔", "#d9620b", "AI nudge"], cancelled: ["🗑️", "#7d776c", "Cancelled"],
+  error: ["⚠️", "#c8102e", "Error"], send_failed: ["⚠️", "#c8102e", "Send failed"], check_failed: ["⚠️", "#c8102e", "Check failed"]};
+const evOf = k => EV[k] || ["•", "#5f5748", k];
+const logGrid = agGrid.createGrid($("logGrid"), {
+  theme, rowData: [], getRowId: p => String(p.data.id),
+  defaultColDef: {resizable: true, sortable: true, filter: true},
+  pagination: true, paginationPageSize: 15, paginationPageSizeSelector: [15, 30, 60],
+  overlayNoRowsTemplate: '<span style="color:#857d6e">The agent has not done anything yet.</span>',
+  columnDefs: [
+    {headerName: "When", field: "at", width: 150, sort: "desc", valueFormatter: p => when(p.value), cellDataType: "number"},
+    {headerName: "Invoice", field: "draft_id", width: 100, cellRenderer: p => p.value ? `<a class="idlink" href="#" onclick="openSheet(${p.value});return false">${p.value}</a>` : ""},
+    {headerName: "Event", field: "kind", width: 150, filter: "agTextColumnFilter", valueFormatter: p => evOf(p.value)[2],
+     cellRenderer: p => `<span class="evk" style="color:${evOf(p.data.kind)[1]}">${evOf(p.data.kind)[0]} ${esc(evOf(p.data.kind)[2])}</span>`},
+    {headerName: "What happened", field: "message", flex: 1, minWidth: 280, wrapText: true, autoHeight: true, cellStyle: {lineHeight: "1.45", padding: "9px 12px"}}
+  ]
+});
+const seenEv = new Set(); let feedPrimed = false;
+function renderFeed(events){
+  const list = events.slice(0, 30);
+  if (!list.length){ $("feed").innerHTML = `<div class="empty">The agent hasn't done anything yet.</div>`; return; }
+  $("feed").innerHTML = list.map(e => { const [ic, col, tag] = evOf(e.kind), fresh = feedPrimed && !seenEv.has(e.id);
+    return `<div class="ev${fresh ? " new" : ""}" onclick="${e.draft_id ? `openSheet(${e.draft_id})` : ""}">
+      <div class="dot" style="background:${col}14">${ic}</div>
+      <div><div class="msg">${esc(e.message)}</div><div class="meta"><span class="tag" style="color:${col}">${esc(tag)}</span>${e.draft_id ? `<span>#${e.draft_id}</span>` : ""}<span>${ago(e.at)}</span></div></div></div>`; }).join("");
+  list.forEach(e => seenEv.add(e.id)); feedPrimed = true;
+}
+
+/* ============ charts ============ */
+let donut, bars, lastLive = [], lastCur = "USD";
+function drawCharts(rows = lastLive, cur = lastCur){
+  if (!window.agCharts || !$("pane-ins").classList.contains("on")) return;
+  const sum = f => rows.reduce((s, d) => s + f(d), 0);
+  const draft = sum(d => [...EDITABLE, "approving"].includes(d.status) ? d.total : 0);
+  const coll = sum(d => Number(d.paid_amount || 0));
+  const late = sum(d => view(d).overdue ? view(d).outstanding : 0);
+  const out = sum(d => view(d).outstanding) - late;
+  const font = {fontFamily: "Inter, sans-serif"};
+  const data = [{label: "In draft", value: draft}, {label: "With client", value: out}, {label: "Overdue", value: late}, {label: "Collected", value: coll}];
+  const dOpts = {container: $("donut"), data, background: {fill: "#fffdf8"}, title: {text: "Where the money is", fontSize: 14, fontWeight: "bold", ...font},
+    legend: {position: "bottom", item: {label: font}}, padding: {top: 10, bottom: 10},
+    series: [{type: "donut", angleKey: "value", legendItemKey: "label", innerRadiusRatio: 0.64,
+      fills: ["#c9bfae", "#0070e0", "#c8102e", "#0f7a4f"], strokeWidth: 3, strokes: ["#fffdf8"], calloutLabel: {enabled: false}, sectorLabel: {enabled: false},
+      innerLabels: [{text: fmt0(draft + out + late + coll, cur), fontSize: 20, fontWeight: "bold", fontFamily: "Fraunces, serif"}, {text: "invoiced", fontSize: 11, color: "#857d6e", ...font}],
+      tooltip: {renderer: p => ({heading: p.datum.label, data: [{label: "Amount", value: fmt(p.datum.value, cur)}]})}}]};
+  const by = {};
+  rows.forEach(d => { const k = d.data.client_name || d.data.client_email || "?";
+    by[k] ??= {client: k, collected: 0, outstanding: 0, draft: 0}; const v = view(d);
+    by[k].collected += Number(d.paid_amount || 0); by[k].outstanding += v.outstanding;
+    if ([...EDITABLE, "approving"].includes(d.status)) by[k].draft += d.total; });
+  const bData = Object.values(by).sort((a, b) => (b.collected + b.outstanding + b.draft) - (a.collected + a.outstanding + a.draft)).slice(0, 8);
+  const bOpts = {container: $("bars"), data: bData, background: {fill: "#fffdf8"}, title: {text: "By client", fontSize: 14, fontWeight: "bold", ...font}, legend: {position: "bottom", item: {label: font}},
+    series: [["collected", "Collected", "#0f7a4f"], ["outstanding", "Outstanding", "#0070e0"], ["draft", "In draft", "#c9bfae"]]
+      .map(([k, n, f]) => ({type: "bar", xKey: "client", yKey: k, yName: n, stacked: true, fill: f, cornerRadius: 4,
+        tooltip: {renderer: p => ({heading: p.datum.client, data: [{label: n, value: fmt(p.datum[k], cur)}]})}})),
+    axes: [{type: "category", position: "bottom", label: font}, {type: "number", position: "left", label: {...font, formatter: p => fmt0(p.value, cur)}}]};
+  if (!donut){ donut = agCharts.AgCharts.create(dOpts); bars = agCharts.AgCharts.create(bOpts); }
+  else { donut.update(dOpts); bars.update(bOpts); }
+}
+
+/* ============ refresh ============ */
+let rowsCache = [], eventsCache = [];
+async function refresh(){
+  if (MODE === "live" && !key()){ openWelcome(); return; }
+  try {
+    const [rows, events] = await Promise.all([api("/drafts"), api("/events")]);
+    rowsCache = rows; eventsCache = events;
+    grid.setGridOption("rowData", rows);                 // getRowId => delta updates + flashing cells
+    grid.refreshCells({columns: ["next", "status"], force: false});
+    logGrid.setGridOption("rowData", events);
+    renderFeed(events);
+    const live = rows.filter(d => d.status !== "cancelled");
+    const cur = (live[0] || rows[0])?.data?.currency || "USD";
+    const s = f => live.reduce((a, d) => a + f(d), 0), cnt = f => live.filter(f).length;
+    const outstanding = s(d => view(d).outstanding), collected = s(d => Number(d.paid_amount || 0));
+    const overdue = s(d => view(d).overdue ? view(d).outstanding : 0), nLate = cnt(d => view(d).overdue);
+    const helpers = s(d => d.payout_status === "sent" ? view(d).helperAmount : 0);
+    grid.setGridOption("pinnedBottomRowData", [{id: "Σ", data: {client_name: `${live.length} invoices`, currency: cur, splits: []},
+      total: s(d => d.total), paid_amount: collected, outstanding, helperAmount: s(d => view(d).helperAmount)}]);
+    const stage = st => live.filter(d => view(d).stage === st);
+    countUp($("v-review"), stage("review").reduce((a, d) => a + d.total, 0), cur); $("c-review").textContent = stage("review").length;
+    countUp($("v-approve"), stage("approve").reduce((a, d) => a + d.total, 0), cur); $("c-approve").textContent = stage("approve").length;
+    countUp($("v-collect"), outstanding, cur); $("c-collect").textContent = stage("collect").length;
+    $("s-collect").innerHTML = nLate ? `<span class="late">${fmt0(overdue, cur)} overdue · ${nLate}</span>` : "outstanding · none late";
+    countUp($("v-done"), collected, cur); $("c-done").textContent = stage("done").length;
+    countUp($("v-help"), helpers, cur); $("c-help").textContent = cnt(d => d.payout_status === "sent");
+    const count = st => rows.filter(d => st === "overdue" ? view(d).overdue : st === "all" ? true : view(d).stage === st).length;
+    STAGES.forEach(([k]) => { const n = count(k); $("n-" + k).textContent = n ? " " + n : ""; });
+    $("i-ai").textContent = events.filter(e => e.kind === "ai").length;
+    $("i-nudge").textContent = events.filter(e => e.kind === "nudged").length;
+    const paidRows = rows.filter(d => d.paid_at && d.sent_at);
+    $("i-days").textContent = paidRows.length ? (paidRows.reduce((a, d) => a + (d.paid_at - d.sent_at) / 86400, 0) / paidRows.length).toFixed(1) : "–";
+    $("i-late").textContent = fmt0(overdue, cur);
+    $("asof").textContent = (MODE === "demo" ? "Demo data · " : "Live · ") + "updated " + new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+    lastLive = live; lastCur = cur; drawCharts();
+    if (openId) renderSheet(rows.find(r => r.id === openId), false);
+  } catch (e){
+    if (e.auth){ toast("That admin key didn't work. Tap 🔑 to fix it.", "err"); openWelcome(); }
+    else toast(e.message, "err");
+  }
+}
+
+/* ============ actions ============ */
+const THINK = ["Reading the client chat", "Pricing the line items", "Code-checking emails, totals and splits", "Draft ready"];
+function thinkUI(i){ $("think").classList.add("on");
+  $("think").innerHTML = THINK.map((t, n) => `<div class="${n < i ? "done" : n === i ? "doing" : "wait"}"><i></i>${t}</div>`).join(""); }
+async function draftFromChat(){
+  const chat = $("chat").value.trim(), note = $("note").value.trim();
+  if (!chat) return toast("Paste a client message first.", "err");
+  const b = $("draftBtn"); b.disabled = true; b.textContent = "AI is reading the chat…";
+  let i = 0; thinkUI(0); const tick = setInterval(() => { if (i < 2) thinkUI(++i); }, 1100);
+  try {
+    const j = await api("/drafts/from-chat", {method: "POST", body: JSON.stringify({chat, note})});
+    clearInterval(tick); thinkUI(3); await sleep(350); thinkUI(4);
+    if (j.status === "pending") toast(`Draft #${j.id} ready: ${fmt(j.total, j.currency)}. Review and approve.`, "ok");
+    else toast(`Draft #${j.id} needs a quick fix: ${j.errors.join("; ")}`);
+    $("chat").value = ""; $("note").value = "";
+    await refresh(); openSheet(j.id);
+    setTimeout(() => $("think").classList.remove("on"), 2500);
+  } catch (e){ clearInterval(tick); $("think").classList.remove("on"); if (e.auth) setKey(); else toast(e.message, "err"); }
+  b.disabled = false; b.textContent = "✨ Draft invoice with AI";
+}
+async function approve(id, ask = true){
+  if (ask && !confirm(`Send invoice #${id} to the client through PayPal?`)) return false;
+  try { const j = await api(`/drafts/${id}/approve`, {method: "POST"}); toast(`#${id} sent · PayPal ${j.paypal_id}`, "ok"); }
+  catch (e){ toast(`#${id}: ${e.message}`, "err"); await refresh(); return false; }
+  await refresh(); return true;
+}
+async function nudge(id, ask = true){
+  if (ask && !confirm(`Have the AI write a reminder for #${id} and send it through PayPal?`)) return;
+  try { const j = await api(`/drafts/${id}/nudge`, {method: "POST"}); toast(`🔔 #${id}: “${j.note.length > 110 ? j.note.slice(0, 110) + "…" : j.note}”`, "ok"); }
+  catch (e){ toast(`#${id}: ${e.message}`, "err"); }
+  await refresh();
+}
+async function cancelInv(id){
+  if (!confirm(`Cancel invoice #${id}? If it was sent, PayPal cancels it for the client too.`)) return;
+  try { await api(`/drafts/${id}/cancel`, {method: "POST"}); toast(`#${id} cancelled`); } catch (e){ toast(e.message, "err"); }
+  refresh();
+}
+async function bulk(kind){
+  const sel = grid.getSelectedRows();
+  const ok = sel.filter(d => kind === "approve" ? ["pending", "send_failed"].includes(d.status) : view(d).unpaid);
+  if (!ok.length) return toast(kind === "approve" ? "Tick invoices that are awaiting approval." : "Tick sent, unpaid invoices.", "err");
+  if (!confirm(`${kind === "approve" ? "Approve and send" : "Nudge"} ${ok.length} invoice(s)?`)) return;
+  for (const d of ok) await (kind === "approve" ? approve(d.id, false) : nudge(d.id, false));
+  grid.deselectAll();
+}
+async function runAgent(quiet){
+  const b = $("runBtn"); b.disabled = true;
+  const before = new Map(rowsCache.map(r => [r.id, r.payout_status]));
+  try {
+    const res = await api("/drafts/check-payments", {method: "POST"});
+    const paid = res.filter(r => r.status === "paid").length, payouts = res.filter(r => String(r.payout || "").startsWith("sent"));
+    let nudged = 0; try { nudged = (await api("/drafts/nudge-overdue", {method: "POST"})).filter(r => r.note).length; } catch {}
+    if (!quiet || payouts.length || nudged) toast(`Agent checked ${res.length} invoice(s) · ${paid} paid · ${payouts.length} payout(s) · ${nudged} nudge(s)`, "ok");
+    await refresh();
+    payouts.forEach(p => { if (before.get(p.id) !== "sent") coinsTo(p.id); });
+  } catch (e){ toast(e.message, "err"); }
+  b.disabled = false;
+}
+let autoTimer = null;
+$("auto").onchange = e => { clearInterval(autoTimer); if (e.target.checked){ runAgent(); autoTimer = setInterval(() => runAgent(true), 60000); toast("Autopilot on: the agent runs every minute while this page is open"); } };
+function sample(){
+  $("chat").value = `Hi! It's Amaka from Lagos Bloom Studio (amaka@lagosbloom.co). Happy with the plan: brand logo pack for $300 and 4 social media templates at $50 each. Please invoice us in USD, due ${isoIn(10)}. Thanks!`;
+  $("note").value = "split 20% to ada@example.com";
+}
+/* money animation: coins fly from the invoice to the Helpers node */
+function coinsTo(){
+  const to = $("rb-help").getBoundingClientRect(), from = ($("sheet").classList.contains("on") ? $("split") : $("rb-done")).getBoundingClientRect();
+  $("rb-help").classList.remove("pulse"); void $("rb-help").offsetWidth; $("rb-help").classList.add("pulse");
+  for (let i = 0; i < 6; i++){
+    const c = document.createElement("div"); c.className = "coin"; c.textContent = i % 2 ? "💵" : "🪙";
+    c.style.left = (from.left + from.width / 2 + (Math.random() * 60 - 30)) + "px"; c.style.top = (from.top + from.height / 2) + "px";
+    document.body.append(c);
+    setTimeout(() => { c.style.transform = `translate(${to.left + to.width / 2 - from.left - from.width / 2}px, ${to.top + 20 - from.top - from.height / 2}px) scale(.6)`; c.style.opacity = "0"; }, 40 + i * 90);
+    setTimeout(() => c.remove(), 1400 + i * 90);
+  }
+}
+
+/* ============ invoice sheet ============ */
+let openId = null, cur = null, lastStamp = {};
+const editGrid = (el, cols, extra) => agGrid.createGrid(el, {theme, rowData: [], singleClickEdit: true, stopEditingWhenCellsLoseFocus: true,
+  defaultColDef: {resizable: true, editable: p => !p.node.rowPinned && EDITABLE.includes(cur?.status)}, columnDefs: cols, rowHeight: 40, ...extra});
+const delCol = (getGrid, after) => ({headerName: "", colId: "del", width: 54, editable: false,
+  cellRenderer: p => p.node.rowPinned || !EDITABLE.includes(cur?.status) ? "" : `<button class="sm danger" title="Remove" style="padding:3px 9px">✕</button>`,
+  onCellClicked: p => { if (p.node.rowPinned || !EDITABLE.includes(cur?.status)) return; getGrid().applyTransaction({remove: [p.data]}); after(); }});
+const itemsGrid = editGrid($("itemsGrid"), [
+  {headerName: "Item", field: "name", flex: 2, minWidth: 150, cellDataType: "text"},
+  {headerName: "Qty", field: "quantity", width: 80, cellDataType: "number", type: "rightAligned", valueParser: p => Math.max(0, Number(p.newValue) || 0)},
+  {headerName: "Unit price", field: "unit_amount", width: 118, cellDataType: "number", type: "rightAligned", valueFormatter: p => fmt(p.value, $("f-cur").value)},
+  {headerName: "Line total", colId: "line", width: 122, editable: false, type: "rightAligned", cellDataType: "number",
+   valueGetter: p => p.node.rowPinned ? p.data.line : (Number(p.data.quantity) || 0) * (Number(p.data.unit_amount) || 0), valueFormatter: p => fmt(p.value, $("f-cur").value)},
+  delCol(() => itemsGrid, () => itemTotals())
+], {onCellValueChanged: () => itemTotals()});
+const helpersGrid = editGrid($("helpersGrid"), [
+  {headerName: "Helper PayPal email", field: "email", flex: 2, minWidth: 180, cellDataType: "text"},
+  {headerName: "Share %", field: "percent", width: 96, cellDataType: "number", type: "rightAligned", valueParser: p => Math.min(100, Math.max(0, Number(p.newValue) || 0))},
+  {headerName: "Gets", colId: "gets", width: 118, editable: false, type: "rightAligned", cellDataType: "number",
+   valueGetter: p => itemsSum() * (Number(p.data.percent) || 0) / 100, valueFormatter: p => fmt(p.value, $("f-cur").value),
+   cellClassRules: {late: p => !!p.node.rowPinned && p.data.percent < 0}},
+  delCol(() => helpersGrid, () => helperTotals())
+], {onCellValueChanged: () => helperTotals(), overlayNoRowsTemplate: '<span style="color:#857d6e">No helpers: you keep 100%.</span>'});
+const tlGrid = agGrid.createGrid($("tlGrid"), {theme, rowData: [], defaultColDef: {resizable: true},
+  overlayNoRowsTemplate: '<span style="color:#857d6e">No events yet.</span>',
+  columnDefs: [
+    {headerName: "When", field: "at", width: 140, valueFormatter: p => when(p.value)},
+    {headerName: "Event", field: "kind", width: 130, cellRenderer: p => `<span class="evk" style="color:${evOf(p.value)[1]}">${evOf(p.value)[0]} ${esc(evOf(p.value)[2])}</span>`},
+    {headerName: "What happened", field: "message", flex: 1, minWidth: 220, wrapText: true, autoHeight: true, cellStyle: {lineHeight: "1.4", padding: "6px 10px"}}]});
+const rowsOf = g => { const a = []; g.forEachNode(n => a.push(n.data)); return a; };
+const itemsSum = () => rowsOf(itemsGrid).reduce((s, i) => s + (Number(i.quantity) || 0) * (Number(i.unit_amount) || 0), 0);
+function itemTotals(){ itemsGrid.setGridOption("pinnedBottomRowData", [{name: "Total", line: itemsSum()}]); helpersGrid.refreshCells({columns: ["gets"], force: true}); helperTotals(); }
+function helperTotals(){
+  const pct = rowsOf(helpersGrid).reduce((s, h) => s + (Number(h.percent) || 0), 0);
+  helpersGrid.setGridOption("pinnedBottomRowData", [{email: pct > 100 ? "⚠ Over 100%" : "You keep", percent: 100 - pct}]);
+  livePaper();
+}
+function addItem(){ itemsGrid.applyTransaction({add: [{name: "New item", quantity: 1, unit_amount: 0}]}); itemTotals(); }
+function addHelper(){ helpersGrid.applyTransaction({add: [{email: "", percent: 10}]}); helperTotals(); }
+
+/* the printed invoice + money split, drawn from a plain invoice object */
+function paperHTML(d, inv){
+  const v = view({...d, data: inv, total: inv.total}), c = inv.currency || "USD";
+  const items = (inv.items || []).map(i => `<tr><td>${esc(i.name)}</td><td class="r">${esc(i.quantity)}</td><td class="r u">${fmt(i.unit_amount, c)}</td><td class="r">${fmt((Number(i.quantity) || 0) * (Number(i.unit_amount) || 0), c)}</td></tr>`).join("")
+             || `<tr><td colspan="4" class="muted">No line items yet</td></tr>`;
+  const payable = d.pay_url && d.pay_url !== "#" && v.unpaid;
+  return `<div class="pp-head"><div><div class="t">Invoice</div><div class="n">#${d.id}${d.paypal_id ? " · " + esc(d.paypal_id) : ""}</div></div>
+    <div class="pp-meta"><span>Issued</span><span>Due</span><span>Currency</span><b>${d.sent_at ? shortDate(isoOf(d.sent_at)) : "—"}</b><b class="${v.overdue ? "late" : ""}">${shortDate(inv.due_date)}</b><b>${esc(c)}</b></div></div>
+    <div class="pp-bill"><span>Bill to</span><b>${esc(inv.client_name || "—")}</b><br><span style="text-transform:none;letter-spacing:0;font-weight:500;font-size:13px">${esc(inv.client_email || "email missing")}</span></div>
+    <table class="pp-items"><thead><tr><th>Item</th><th class="r">Qty</th><th class="r u">Unit</th><th class="r">Amount</th></tr></thead><tbody>${items}</tbody></table>
+    <div class="pp-total"><span>${d.status === "paid" ? "Paid" : v.unpaid && v.paid ? `Paid ${fmt(v.paid, c)} · Due` : "Total due"}</span><b>${fmt(v.unpaid ? Math.max(0, inv.total - v.paid) : inv.total, c)}</b></div>
+    ${payable ? `<a class="ppbtn" href="${esc(d.pay_url)}" target="_blank" rel="noopener">Pay with <i>Pay<b>Pal</b></i></a>` : ""}
+    <div class="stamp ${v.stCls}" id="stamp">${esc(v.stamp)}</div>`;
+}
+const isoOf = ts => { const d = new Date(ts * 1000); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+function splitHTML(d, inv){
+  const c = inv.currency || "USD", sp = inv.splits || [], tot = inv.total || 0;
+  const used = sp.reduce((s, x) => s + (Number(x.percent) || 0), 0), keep = 100 - used;
+  const segs = sp.map((s, i) => `<div style="flex:${Math.max(Number(s.percent) || 0, 0.01)};background:${["#5b3fd0", "#0e8ca8", "#d9620b", "#b0306a"][i % 4]}" title="${esc(s.email)}">${esc(String(s.email || "helper").split("@")[0])} ${esc(s.percent)}%<span class="amt">&nbsp;· ${fmt0(tot * (Number(s.percent) || 0) / 100, c)}</span></div>`).join("");
+  const po = !sp.length ? "No helpers on this invoice." :
+    d.payout_status === "sent" ? `✅ Paid out through PayPal Payouts${d.payout_batch_id ? ` · batch <span class="mono">${esc(d.payout_batch_id)}</span>` : ""}` :
+    d.payout_status === "failed" ? `⚠️ Payout failed: ${esc(d.payout_error || "")}. The agent retries on its next run.` :
+    "🕓 Paid out automatically, once, after PayPal confirms the full amount.";
+  return `<div class="lbl"><span>Where the money goes</span><span>${fmt(tot, c)}</span></div>
+    <div class="sbar">${keep >= 0 ? `<div class="you" style="flex:${Math.max(keep, 0.01)}">You ${keep.toFixed(0)}% · ${fmt0(tot * keep / 100, c)}</div>` : `<div class="over" style="flex:1">Over 100% by ${(-keep).toFixed(0)}%</div>`}${segs}</div>
+    <div class="po">${po}</div>`;
+}
+function formInv(){
+  const items = rowsOf(itemsGrid).filter(i => String(i.name || "").trim());
+  return {client_name: $("f-name").value, client_email: $("f-email").value, currency: $("f-cur").value, due_date: $("f-due").value,
+          items, splits: rowsOf(helpersGrid), total: items.reduce((s, i) => s + (Number(i.quantity) || 0) * (Number(i.unit_amount) || 0), 0)};
+}
+function livePaper(){ if (!cur || !EDITABLE.includes(cur.status)) return; const inv = formInv();
+  $("paper").innerHTML = paperHTML(cur, inv); $("split").innerHTML = splitHTML(cur, inv); }
+function stepsHTML(d, evs){
+  const v = view(d), sp = (d.data.splits || []).length, at = k => { const e = evs.filter(x => x.kind === k).pop(); return e ? when(e.at) : ""; };
+  const s = [];
+  s.push({h: "Drafted from the chat by AI", w: when(d.created_at), st: "done"});
+  if (d.status === "needs_review") s.push({h: "Needs your fix", w: esc(d.error || ""), st: "bad"});
+  s.push({h: "You approved", w: d.approved_at ? when(d.approved_at) : "Nothing is sent until you approve", st: d.approved_at ? "done" : d.status === "pending" ? "now" : ""});
+  s.push({h: "Sent through PayPal", w: d.sent_at ? when(d.sent_at) + (d.paypal_id ? " · " + esc(d.paypal_id) : "") : d.status === "send_failed" ? esc(d.error || "send failed") : "",
+          st: d.sent_at ? "done" : d.status === "send_failed" ? "bad" : d.status === "approving" ? "now" : ""});
+  if (d.reminders) s.push({h: `AI nudged the client ×${d.reminders}`, w: "Last " + ago(d.last_reminded), st: "done"});
+  s.push({h: d.status === "partially_paid" ? `Part paid: ${fmt(v.paid, d.data.currency)}` : "Client paid in full", w: d.paid_at ? when(d.paid_at) : v.overdue ? `<span class="late">${v.late} days late</span>` : "",
+          st: d.status === "paid" ? "done" : v.unpaid ? "now" : ""});
+  if (sp) s.push({h: "Helpers paid via PayPal Payouts", w: d.payout_status === "sent" ? at("payout") || "done" : d.payout_status === "failed" ? "failed, retrying" : "after full payment",
+                  st: d.payout_status === "sent" ? "done" : d.payout_status === "failed" ? "bad" : d.status === "paid" ? "now" : ""});
+  if (d.status === "cancelled") s.push({h: "Cancelled", w: at("cancelled"), st: "bad"});
+  return s.map(x => `<li class="${x.st}"><span class="b"></span><div class="h">${x.h}</div><div class="w">${x.w || "&nbsp;"}</div></li>`).join("");
+}
+let sheetEvents = [];
+async function openSheet(id){
+  openId = id; const d = rowsCache.find(r => r.id === id); if (!d) return;
+  sheetEvents = eventsCache.filter(e => e.draft_id === id).slice().reverse();
+  renderSheet(d, true);
+  $("sheet").classList.add("on"); $("shade").classList.add("on"); $("sheet").setAttribute("aria-hidden", "false"); $("sBody").scrollTop = 0;
+  try { const ev = await api(`/drafts/${id}/events`); tlGrid.setGridOption("rowData", ev); sheetEvents = ev.slice().reverse(); if (openId === id) $("steps").innerHTML = stepsHTML(rowsCache.find(r => r.id === id) || d, sheetEvents); } catch {}
+}
+function closeSheet(){ openId = null; $("sheet").classList.remove("on"); $("shade").classList.remove("on"); $("sheet").setAttribute("aria-hidden", "true"); }
+function renderSheet(d, full){
+  if (!d) return closeSheet();
+  const statusChanged = !cur || cur.id !== d.id || cur.status !== d.status || cur.payout_status !== d.payout_status;
+  cur = d; const v = view(d), ed = EDITABLE.includes(d.status);
+  $("sTitle").textContent = `#${d.id} · ${d.data.client_name || d.data.client_email || "New client"}`;
+  $("sPill").innerHTML = `<span class="pill ${v.cls}">${esc(v.label)}</span>`;
+  $("sErr").innerHTML = d.error && EDITABLE.includes(d.status) ? `<div class="errors"><b>${d.status === "needs_review" ? "Fix before approving:" : "Last error:"}</b> ${esc(d.error)}</div>` : "";
+  $("steps").innerHTML = stepsHTML(d, sheetEvents);
+  if (!full && !statusChanged) return;            // never wipe edits the user is making
+  $("editor").style.display = ed ? "" : "none";
+  if (ed){
+    $("f-name").value = d.data.client_name || ""; $("f-email").value = d.data.client_email || "";
+    $("f-cur").value = d.data.currency || "USD"; $("f-due").value = d.data.due_date || "";
+    itemsGrid.setGridOption("rowData", (d.data.items || []).map(i => ({...i})));
+    helpersGrid.setGridOption("rowData", (d.data.splits || []).map(s => ({...s})));
+    itemTotals();
+  }
+  const inv = {...d.data, total: d.total};
+  $("paper").innerHTML = ed ? paperHTML(d, formInv()) : paperHTML(d, inv);
+  $("split").innerHTML = ed ? splitHTML(d, formInv()) : splitHTML(d, inv);
+  if (lastStamp[d.id] !== v.stamp || full){ const st = $("stamp"); if (st){ st.classList.remove("slam"); void st.offsetWidth; st.classList.add("slam"); } lastStamp[d.id] = v.stamp; }
+  $("sChat").textContent = d.source_chat || "(created without a chat)";
+  let a = "";
+  if (ed) a += `<button class="soft" onclick="saveSheet(false)">Save</button><button class="green" id="sendBtn" onclick="saveSheet(true)">✍️ Approve &amp; send via PayPal</button>`;
+  if (v.unpaid) a += `<button class="orange" onclick="nudge(${d.id})">🔔 AI nudge</button>`;
+  if (v.unpaid && MODE === "demo") a += `<button class="blue" onclick="demoClientPays(${d.id})">💳 Simulate client payment</button>`;
+  if (!["paid", "cancelled"].includes(d.status)) a += `<button class="danger" onclick="cancelInv(${d.id})">Cancel</button>`;
+  $("sActs").innerHTML = a; $("sActs").style.display = a ? "" : "none";
+}
+async function saveSheet(andApprove, ask = true){
+  itemsGrid.stopEditing(); helpersGrid.stopEditing();
+  const f = formInv(); delete f.total;
+  try {
+    const r = await api(`/drafts/${cur.id}/edit`, {method: "POST", body: JSON.stringify(f)});
+    if (r.errors.length) toast("Saved. Still needs: " + r.errors.join("; "));
+    else if (andApprove) await approve(cur.id, ask);
+    else toast(`#${cur.id} saved and ready to approve`, "ok");
+    await refresh(); const d = rowsCache.find(x => x.id === cur.id); if (d && openId) renderSheet(d, true);
+    if (openId) tlGrid.setGridOption("rowData", await api(`/drafts/${cur.id}/events`));
+  } catch (e){ toast(e.message, "err"); }
+}
+document.addEventListener("keydown", e => { if (e.key === "Escape"){ if ($("sheet").classList.contains("on")) closeSheet(); } });
+
+/* ============ Demo sandbox: same API, runs in the browser, nothing reaches PayPal ============ */
+const Demo = (() => {
+  let rows = [], events = [], nid = 100, eid = 0;
+  const now = () => Date.now() / 1000, D = 86400;
+  const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  const total = inv => Math.round((inv.items || []).reduce((s, i) => s + Number(i.quantity) * Number(i.unit_amount), 0) * 100) / 100;
+  const log = (did, kind, message, at = now()) => events.unshift({id: ++eid, draft_id: did, at, kind, message});
+  const out = r => ({...JSON.parse(JSON.stringify(r)), total: total(r.data), paid_amount: r.status === "paid" && r.paid_amount == null ? total(r.data) : r.paid_amount});
+  const get = id => { const r = rows.find(x => x.id === Number(id)); if (!r) throw new Error("Draft not found"); return r; };
+  const err = (msg) => { throw new Error(msg); };
+  function validate(inv){
+    const e = [];
+    if (!EMAIL.test(String(inv.client_email || ""))) e.push("bad email");
+    if (!["USD", "EUR", "GBP", "CAD", "AUD"].includes(inv.currency)) e.push("unsupported currency");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(inv.due_date || "")) e.push("bad due date"); else if (daysLate(inv.due_date) > 0) e.push("due date in past");
+    if (!(inv.items || []).length) e.push("no items");
+    (inv.items || []).forEach(i => { if (!(Number(i.quantity) > 0 && Number(i.unit_amount) > 0)) e.push("bad amount: " + i.name); });
+    let p = 0; (inv.splits || []).forEach(s => { if (!EMAIL.test(String(s.email || "").trim())) e.push("bad helper email: " + s.email); if (!(Number(s.percent) > 0 && Number(s.percent) <= 100)) e.push("bad percent: " + s.percent); p += Number(s.percent) || 0; });
+    if (p > 100) e.push("splits add up to more than 100%");
+    return e;
+  }
+  /* offline stand-in for the LLM so the demo works with no keys */
+  function extract(chat, note){
+    const email = (chat.match(/[\w.+-]+@[\w-]+\.[\w.-]*\w/) || [""])[0];
+    const nm = chat.match(/(?:[Ii]t'?s|[Tt]his is|I am|I'm|[Rr]egards,?|[Tt]hanks,?)\s+([A-Z][a-z]+(?: [A-Z][a-z]+)?)/);
+    const co = chat.match(/\bfrom ((?:[A-Z][\w&']*\s?){1,4})/);
+    let name = nm ? nm[1] : email ? email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "";
+    if (co && name) name += " · " + co[1].trim();
+    const currency = /€|\bEUR\b/.test(chat) ? "EUR" : /£|\bGBP\b/.test(chat) ? "GBP" : /\bCAD\b/.test(chat) ? "CAD" : /\bAUD\b/.test(chat) ? "AUD" : "USD";
+    const due = (chat.match(/\d{4}-\d{2}-\d{2}/) || [isoIn(14)])[0];
+    const items = [];
+    chat.split(/[,;\n]|\band\b|\.(?=\s|$)/).forEach(c => {
+      const m = c.match(/[$€£]\s?(\d[\d,]*(?:\.\d+)?)/); if (!m) return;
+      let q = 1; const qm = c.match(/\b(\d+)\s+(?![$€£\d])([A-Za-z])/);
+      if (qm && /\b(each|per|apiece|x)\b/i.test(c)) q = Number(qm[1]);
+      let n = c.replace(m[0], " ").split(":").pop()
+        .replace(/\b(each|per|apiece|for|at|costs?|is|was|the|a|an|plus|also|usd|eur|gbp|total)\b/gi, " ").replace(/\s+/g, " ").trim().replace(/^\W+|\W+$/g, "");
+      if (q > 1) n = n.replace(new RegExp("^" + q + "\\s+"), "");
+      n = (n || "Services").slice(0, 60); items.push({name: n[0].toUpperCase() + n.slice(1), quantity: q, unit_amount: Number(m[1].replace(/,/g, ""))});
+    });
+    const splits = []; (note || "").replace(/(\d+(?:\.\d+)?)\s*%\s*(?:to|for)?\s*([\w.+-]+@[\w-]+\.[\w.-]*\w)/gi, (_, p, e) => splits.push({email: e, percent: Number(p)}));
+    return {client_name: name, client_email: email, currency, due_date: due, items, splits};
+  }
+  function nudgeText(r){
+    const inv = r.data, late = daysLate(inv.due_date), first = (inv.client_name || "there").split(/[ ·]/)[0], left = fmt(total(inv) - Number(r.paid_amount || 0), inv.currency);
+    if (late <= 0) return `Hi ${first}, a quick heads-up that invoice #${r.id} (${left}) is due ${shortDate(inv.due_date)}. You can pay in a tap with PayPal. Thank you!`;
+    if (late < 14) return `Hi ${first}, hope the project is landing well! Invoice #${r.id} for ${left} was due ${late} day${late > 1 ? "s" : ""} ago. Could you take care of it this week? The PayPal link is in this email. Thanks so much.`;
+    return `Hi ${first}, following up on invoice #${r.id}: ${left} is now ${late} days overdue. Please settle it via the PayPal link, or reply if something is holding it up and we'll sort it out together.`;
+  }
+  function payout(r){
+    if (r.status !== "paid") return "not fully paid yet";
+    const sp = r.data.splits || []; if (!sp.length){ r.payout_status ??= "none"; return "no helpers"; }
+    if (r.payout_status === "sent") return "already handled";
+    const bid = "DEMO" + Math.random().toString(36).slice(2, 10).toUpperCase(), t = total(r.data);
+    r.payout_status = "sent"; r.payout_batch_id = bid;
+    log(r.id, "payout", "Helpers paid via PayPal Payouts: " + sp.map(s => `${s.email} ${(t * s.percent / 100).toFixed(2)} ${r.data.currency}`).join(", ") + ` (batch ${bid})`);
+    return "sent " + bid;
+  }
+  function check(r){
+    if (!r.paypal_id || r.status === "paid") return {id: r.id, status: r.status};
+    const t = total(r.data), p = Number(r._clientPaid || 0);
+    if (p + 0.005 >= t && p > 0){ r.status = "paid"; r.paid_amount = p; r.paid_at = now(); r.paypal_status = "PAID"; log(r.id, "paid", `PayPal reports ${p.toFixed(2)} of ${t.toFixed(2)} paid (PAID)`); }
+    else if (p > 0 && r.status !== "partially_paid"){ r.status = "partially_paid"; r.paid_amount = p; r.paypal_status = "PARTIALLY_PAID"; log(r.id, "partially_paid", `PayPal reports ${p.toFixed(2)} of ${t.toFixed(2)} paid (PARTIALLY_PAID)`); }
+    return {id: r.id, status: r.status, paid: p, total: t};
+  }
+  function seed(){
+    rows = []; events = []; nid = 100; eid = 0; const t = now();
+    const mk = (o) => { const r = {id: ++nid, status: "pending", paypal_id: null, pay_url: null, paid_amount: null, paypal_status: null, payout_status: null, payout_batch_id: null, payout_error: null,
+      error: null, reminders: 0, last_reminded: null, approved_at: null, sent_at: null, paid_at: null, source_chat: null, ...o}; rows.push(r); return r; };
+    const a = mk({data: {client_name: "Tunde Bakare", client_email: "tunde@acmeworks.io", currency: "USD", due_date: isoIn(-6),
+      items: [{name: "Landing page redesign", quantity: 1, unit_amount: 450}, {name: "Copywriting", quantity: 1, unit_amount: 150}], splits: []},
+      status: "sent", created_at: t - 20 * D, approved_at: t - 19 * D, sent_at: t - 19 * D, paypal_id: "INV2-DEMO-7QK3-TB01", pay_url: "#", paypal_status: "SENT", reminders: 1, last_reminded: t - 2.5 * D,
+      source_chat: "Tunde: Love the new direction! Go ahead with the landing page redesign ($450) and the copy ($150). Send the invoice to tunde@acmeworks.io."});
+    log(a.id, "ai", "AI read the chat and drafted 2 item(s), 600.00 USD", a.created_at); log(a.id, "approved", "Approved by owner on dashboard", a.approved_at);
+    log(a.id, "sent", "Invoice sent to client through PayPal (INV2-DEMO-7QK3-TB01)", a.sent_at); log(a.id, "nudged", "AI reminder sent via PayPal: \"Hi Tunde, just a friendly reminder that invoice #101 is due today.\"", a.last_reminded);
+    const b = mk({data: {client_name: "Zainab Okafor", client_email: "zainab@kora.studio", currency: "USD", due_date: isoIn(-2),
+      items: [{name: "Mobile app UI kit", quantity: 1, unit_amount: 800}], splits: [{email: "chidi@helper.dev", percent: 25}]},
+      status: "paid", created_at: t - 16 * D, approved_at: t - 15.9 * D, sent_at: t - 15.9 * D, paid_at: t - 9 * D, paid_amount: 800, paypal_id: "INV2-DEMO-ZK88-OK02", paypal_status: "PAID",
+      payout_status: "sent", payout_batch_id: "DEMO8H2KQX", source_chat: "Zainab: The UI kit is perfect. $800 as agreed, bill zainab@kora.studio 🙏"});
+    log(b.id, "ai", "AI read the chat and drafted 1 item(s), 800.00 USD, 1 helper split(s)", b.created_at); log(b.id, "sent", "Invoice sent to client through PayPal (INV2-DEMO-ZK88-OK02)", b.sent_at);
+    log(b.id, "paid", "PayPal reports 800.00 of 800.00 paid (PAID)", b.paid_at); log(b.id, "payout", "Helpers paid via PayPal Payouts: chidi@helper.dev 200.00 USD (batch DEMO8H2KQX)", b.paid_at + 60);
+    const c = mk({data: {client_name: "Mark Ellis", client_email: "mark@northwind.co", currency: "USD", due_date: isoIn(10),
+      items: [{name: "Monthly retainer, October", quantity: 1, unit_amount: 1200}], splits: [{email: "ada@helper.dev", percent: 15}]},
+      status: "partially_paid", created_at: t - 5 * D, approved_at: t - 4.9 * D, sent_at: t - 4.9 * D, paid_amount: 400, _clientPaid: 400, paypal_id: "INV2-DEMO-ME44-NW03", pay_url: "#", paypal_status: "PARTIALLY_PAID",
+      source_chat: "Mark: Retainer for October is fine at $1,200. I'll pay a third now and the rest by the 15th."});
+    log(c.id, "ai", "AI read the chat and drafted 1 item(s), 1200.00 USD, 1 helper split(s)", c.created_at); log(c.id, "sent", "Invoice sent to client through PayPal (INV2-DEMO-ME44-NW03)", c.sent_at);
+    log(c.id, "partially_paid", "PayPal reports 400.00 of 1200.00 paid (PARTIALLY_PAID)", t - 2 * D);
+    const d = mk({data: {client_name: "Ngozi Eze", client_email: "", currency: "USD", due_date: isoIn(7), items: [{name: "Product photos", quantity: 12, unit_amount: 15}], splits: []},
+      status: "needs_review", error: "bad email", created_at: t - 0.2 * D,
+      source_chat: "Ngozi: Can you shoot 12 product photos at $15 each? I'll send my email later."});
+    log(d.id, "ai", "AI read the chat and drafted 1 item(s), 180.00 USD", d.created_at); log(d.id, "review", "Needs your review: bad email", d.created_at + 1);
+  }
+  async function call(path, opts = {}){
+    await sleep(160 + Math.random() * 180);
+    const body = opts.body ? JSON.parse(opts.body) : {}, m = path.match(/^\/drafts\/(\d+)\/(\w+)/);
+    if (path === "/drafts") return rows.map(out);
+    if (path.startsWith("/events")) return events.map(e => ({...e}));
+    if (path === "/drafts/from-chat"){
+      if (!String(body.chat || "").trim()) err("Paste the client's message first");
+      await sleep(2200);
+      const inv = extract(body.chat, body.note), e = validate(inv), st = e.length ? "needs_review" : "pending";
+      const r = {id: ++nid, data: inv, status: st, error: e.join("; ") || null, created_at: now(), source_chat: body.chat, reminders: 0};
+      rows.push(r);
+      log(r.id, "ai", `AI read the chat and drafted ${inv.items.length} item(s), ${total(inv).toFixed(2)} ${inv.currency}` + (inv.splits.length ? `, ${inv.splits.length} helper split(s)` : ""));
+      if (e.length) log(r.id, "review", "Needs your review: " + e.join("; "));
+      return {status: st, id: r.id, total: total(inv), currency: inv.currency, errors: e, approve_link: null, invoice: inv};
+    }
+    if (path === "/drafts/check-payments"){
+      const res = rows.filter(r => UNPAID.includes(r.status) || (r.status === "paid" && r.payout_status !== "sent" && r.payout_status !== "none"))
+        .map(r => { const x = check(r); if (x.status === "paid") x.payout = payout(r); return x; });
+      return res;
+    }
+    if (path === "/drafts/nudge-overdue"){
+      return rows.filter(r => UNPAID.includes(r.status) && daysLate(r.data.due_date) > 0)
+        .map(r => r.last_reminded && now() - r.last_reminded < 3 * D ? {id: r.id, skipped: "reminded in the last 3 days"} : doNudge(r));
+    }
+    if (!m) err("Not found");
+    const r = get(m[1]), act = m[2];
+    if (act === "events") return events.filter(e => e.draft_id === r.id).map(e => ({...e}));
+    if (act === "edit"){
+      if (!EDITABLE.includes(r.status)) err("Locked: this invoice is already approved");
+      const inv = r.data, ch = [];
+      ["client_name", "client_email", "currency", "due_date"].forEach(k => { if (k in body){ inv[k] = k === "currency" ? String(body[k]).toUpperCase() : String(body[k]).trim(); ch.push(k); } });
+      if (body.items){ inv.items = body.items.filter(i => String(i.name || "").trim()).map(i => ({name: String(i.name).trim(), quantity: Number(i.quantity) || 0, unit_amount: Number(i.unit_amount) || 0})); ch.push("items"); }
+      if (body.splits){ inv.splits = body.splits.filter(s => String(s.email || "").trim()).map(s => ({email: String(s.email).trim(), percent: Number(s.percent) || 0})); ch.push("helpers"); }
+      const e = validate(inv); r.status = e.length ? "needs_review" : r.status === "send_failed" ? "send_failed" : "pending"; r.error = e.join("; ") || null;
+      log(r.id, "edited", `Edited ${ch.join(", ") || "nothing"}` + (e.length ? ` - still needs: ${e.join("; ")}` : " - ready to approve"));
+      return {...out(r), errors: e, approve_link: null};
+    }
+    if (act === "approve"){
+      if (!["pending", "send_failed"].includes(r.status)) { const e = new Error("Not approvable (needs review, or already sent)"); e.status = 409; throw e; }
+      r.status = "approving"; r.approved_at = now(); log(r.id, "approved", "Approved by owner on dashboard");
+      await sleep(500);
+      r.paypal_id = "INV2-DEMO-" + Math.random().toString(36).slice(2, 6).toUpperCase() + "-" + Math.random().toString(36).slice(2, 6).toUpperCase();
+      log(r.id, "paypal", "PayPal draft invoice created: " + r.paypal_id);
+      r.status = "sent"; r.sent_at = now(); r.paypal_status = "SENT"; r.pay_url = "#"; r.error = null;
+      log(r.id, "sent", `Invoice sent to client through PayPal (${r.paypal_id})`);
+      return {paypal_id: r.paypal_id};
+    }
+    if (act === "nudge"){ if (!UNPAID.includes(r.status)) err("Only sent, unpaid invoices can be nudged"); return doNudge(r); }
+    if (act === "cancel"){
+      if (["paid", "cancelled"].includes(r.status)) err("Already " + r.status);
+      const wasSent = !!r.paypal_id; r.status = "cancelled"; if (wasSent) r.paypal_status = "CANCELLED";
+      log(r.id, "cancelled", "Invoice cancelled" + (wasSent ? " in PayPal" : "")); return out(r);
+    }
+    err("Not found");
+  }
+  function doNudge(r){ const note = nudgeText(r); r.reminders = (r.reminders || 0) + 1; r.last_reminded = now();
+    log(r.id, "nudged", `AI reminder sent via PayPal: "${note}"`); return {id: r.id, note, days_late: daysLate(r.data.due_date)}; }
+  function clientPays(id, amount){ const r = get(id); r._clientPaid = amount ?? total(r.data); }
+  return {call, seed, clientPays, rows: () => rows};
+})();
+
+async function demoClientPays(id){
+  Demo.clientPays(id); toast(`💳 Client paid #${id} on PayPal. The agent verifies it…`);
+  await sleep(700); await runAgent();
+}
+function enterDemo(quiet){
+  if (MODE !== "demo"){ MODE = "demo"; Demo.seed(); seenEv.clear(); feedPrimed = false; lastStamp = {}; }
+  $("modeTag").textContent = "Judge Mode · demo data"; $("modeTag").classList.add("demo");
+  clearInterval(autoTimer); $("auto").checked = false;
+  if (!quiet) toast("Demo data loaded. Nothing here reaches PayPal. Tap ✕ on the Judge bar or 🔑 to go live.");
+  showJudgeBar(true, !quiet);
+  return refresh();
+}
+function exitDemo(){
+  killTour();
+  showJudgeBar(false);
+  if (MODE === "demo"){ MODE = "live"; seenEv.clear(); feedPrimed = false; lastStamp = {}; closeSheet(); grid.setGridOption("rowData", []); logGrid.setGridOption("rowData", []); }
+  $("modeTag").textContent = "PayPal Sandbox"; $("modeTag").classList.remove("demo");
+  document.querySelectorAll(".spot").forEach(e => e.classList.remove("spot"));
+  history.replaceState(null, "", location.pathname);
+  refresh();
+}
+
+/* ============ Judge Mode tour ============ */
+const TOUR = [
+  "Meet Settle. This tour runs on demo data, so nothing reaches PayPal.",
+  "A client confirms the job in a chat. You paste it in, with a private note about who helped.",
+  "The AI drafts the invoice. Code then checks the email, totals and helper split.",
+  "Nothing is sent until you approve. One tap and PayPal emails the invoice.",
+  "The client pays on PayPal's own checkout.",
+  "The agent checks that the full amount arrived, then pays the helper their 20% through PayPal Payouts.",
+  "A late payer gets a reminder the AI writes to fit the situation, sent through PayPal.",
+  "Every step is a live AG Grid row you can sort, filter, edit inline and export.",
+  "That's the whole loop: chat, invoice, paid, helpers paid. Explore freely, or tap ✕ to switch to your live sandbox."
+];
+let T = null;
+function killTour(){ if (T) T.dead = true; T = null; }
+function showJudgeBar(on, idle){
+  $("judge").classList.toggle("on", on); document.body.classList.toggle("judging", on);
+  $("jdots").innerHTML = TOUR.map(() => "<i></i>").join("");
+  if (on && idle){ $("jk").textContent = "Judge Mode · demo data"; $("jt").textContent = "Explore freely. Tap Next to start the guided tour."; }
+}
+function caption(i){
+  $("jk").textContent = `Judge Mode · step ${i + 1} of ${TOUR.length}`; $("jt").textContent = TOUR[i];
+  [...$("jdots").children].forEach((d, n) => d.classList.toggle("on", n <= i));
+}
+function spot(el){ document.querySelectorAll(".spot").forEach(e => e.classList.remove("spot")); if (el){ el.classList.add("spot"); el.scrollIntoView({behavior: "smooth", block: "center"}); } }
+function pauseTour(){ if (!T) return; T.paused = !T.paused; $("jpause").textContent = T.paused ? "▶" : "❚❚"; }
+function tourNext(){ if (!T) return startTour(); T.skip = true; T.paused = false; $("jpause").textContent = "❚❚"; }
+const alive = run => T && !T.dead && T.run === run;
+function wait(ms){
+  const run = T && T.run;
+  return new Promise(res => { let el = 0, last = Date.now();
+    const tick = () => { if (!alive(run)) return res(); const n = Date.now(); if (!T.paused) el += n - last; last = n;
+      if (T.skip){ T.skip = false; return res(); } if (el >= ms) return res(); setTimeout(tick, 50); };
+    tick(); });
+}
+async function typeInto(el, text, run, cps = 70){
+  el.value = ""; el.focus({preventScroll: true});
+  for (let i = 0; i < text.length; i += 2){ if (!alive(run)) return; if (T.skip){ el.value = text; return; } el.value = text.slice(0, i + 2); el.scrollTop = el.scrollHeight; await sleep(1000 / cps * 2); }
+  el.value = text;
+}
+async function startTour(){
+  killTour(); closeSheet(); window.scrollTo({top: 0});
+  await enterDemo(true);
+  Demo.seed(); seenEv.clear(); feedPrimed = false; lastStamp = {}; setStage("all"); showTab("ledger"); await refresh();
+  const run = Date.now(); T = {run, dead: false, paused: false, skip: false}; $("jpause").textContent = "❚❚";
+  showJudgeBar(true);
+  const step = async (i, fn) => { if (!alive(run)) throw 0; caption(i); await fn(); if (!alive(run)) throw 0; };
+  try {
+    await step(0, async () => { spot($("ribbon")); await wait(4200); });
+    await step(1, async () => { spot($("composer"));
+      const chat = `Hi! It's Amaka from Lagos Bloom Studio (amaka@lagosbloom.co). Happy with the plan: brand logo pack for $300 and 4 social media templates at $50 each. Please invoice us in USD, due ${isoIn(10)}. Thanks!`;
+      await typeInto($("chat"), chat, run); T.skip = false; await typeInto($("note"), "split 20% to ada@helper.dev", run, 40); T.skip = false; await wait(900); });
+    await step(2, async () => { spot($("composer")); await draftFromChat(); if (!alive(run)) return; spot(null); await wait(1200); if (!alive(run)) return; spot($("split")); await wait(3200); });
+    await step(3, async () => { spot($("sendBtn")); await wait(2200); if (!alive(run)) return;
+      if (cur && EDITABLE.includes(cur.status)) await saveSheet(true, false); spot($("paper")); await wait(2800); });
+    await step(4, async () => { if (cur) Demo.clientPays(cur.id); spot($("paper")); toast("💳 Amaka paid $500.00 on PayPal"); await wait(2400); });
+    await step(5, async () => { spot($("runBtn")); await sleep(500); await runAgent(); if (!alive(run)) return; spot($("split")); await wait(4200); });
+    await step(6, async () => { closeSheet(); await sleep(350); const late = Demo.rows().find(r => r.status === "sent" && daysLate(r.data.due_date) > 0);
+      spot($("feedPanel")); if (late){ late.last_reminded = null; await nudge(late.id, false); } await wait(4800); });
+    await step(7, async () => { spot($("workPanel")); setStage("overdue"); await wait(1800); if (!alive(run)) return; setStage("all"); await wait(2400); });
+    await step(8, async () => { spot(null); window.scrollTo({top: 0, behavior: "smooth"}); [...$("jdots").children].forEach(d => d.classList.add("on")); await wait(60000); });
+  } catch (e){ if (e !== 0) console.error(e); }
+  if (alive(run)){ T = null; $("jk").textContent = "Judge Mode · demo data"; $("jt").textContent = "Explore freely. Tap Next to replay the tour."; spot(null); }
+}
+
+/* ============ welcome + start ============ */
+function openWelcome(){ if (MODE === "live") $("welcome").classList.add("on"); }
+function closeWelcome(){ $("welcome").classList.remove("on"); }
+if (/[?&#](judge|demo)\b/.test(location.search + location.hash)) startTour();
+else if (!key()) openWelcome();
+else refresh();
+setInterval(() => { if (!T) refresh(); }, 20000);   // live: statuses flash as PayPal updates land
+</script>
+</body>
+</html>
