@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f5efe3">
+<meta name="theme-color" content="#f6f7f9">
 <title>Settle · Chat to paid, with PayPal + AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@33/dist/ag-grid-community.min.noStyle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ag-charts-community@11/dist/umd/ag-charts-community.min.js"></script>
 <style>
@@ -260,33 +260,137 @@ body.judging #toasts{bottom:96px}
   body.judging #toasts{bottom:120px}
 }
 @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important} }
+
+/* ===== Settle theme: sober fintech console ===== */
+:root{--paper:#f6f7f9;--card:#fff;--ink:#0f172a;--ink2:#334155;--muted:#64748b;--line:#e5e7eb;--line2:#d1d5db;
+  --blue:#2563eb;--navy:#1e3a8a;--yellow:#2563eb;--green:#047857;--red:#b91c1c;--amber:#b45309;--orange:#c2410c;--violet:#4f46e5;
+  --serif:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--r:12px;--shadow:0 1px 2px rgba(15,23,42,.05)}
+body{background:var(--paper);background-image:none;font-feature-settings:"cv11","tnum"}
+button{border-radius:8px;font-weight:600;transition:background .12s,box-shadow .12s}
+button:hover{transform:none}
+button.yellow{color:#fff;box-shadow:none} button.yellow:hover{background:#1d4ed8}
+button.blue:hover{background:#1d4ed8}
+button.soft{background:#f1f5f9;color:var(--ink)} button.soft:hover{background:#e2e8f0}
+button.line{box-shadow:inset 0 0 0 1px var(--line2);background:#fff} button.line:hover{background:#f8fafc}
+button.danger{background:#fef2f2}
+input,textarea,select{border:1px solid var(--line2);border-radius:8px}
+input:focus,textarea:focus,select:focus{box-shadow:0 0 0 3px #2563eb22}
+label{font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--ink2)}
+.top{background:#ffffffee}
+.top .in{padding:10px 18px}
+.mark{transform:none;box-shadow:none;border-radius:8px;background:var(--ink);color:#fff;font-family:var(--sans);font-weight:700;font-size:15px;width:30px;height:30px}
+.brand h1{font-weight:700;font-size:17px;letter-spacing:-.01em}
+.mode{border-radius:6px;letter-spacing:.03em;font-weight:700;background:#f1f5f9;color:var(--ink2)}
+.mode.demo{background:#eef2ff;color:#3730a3}
+.hero{margin:10px 2px 16px}
+.hero h2{font-weight:650;font-size:clamp(22px,2.4vw,28px);letter-spacing:-.02em}
+.hero h2 em{font-style:normal;color:inherit}
+.hero p{font-size:14px;color:var(--muted)}
+.ribbon{border-radius:12px}
+.node{border-right:1px solid var(--line);padding:14px 18px 16px}
+.node:hover,.node.active{background:#f8fafc}
+.node.active::before{height:2px}
+.node:not(:last-child)::after,.flow{display:none}
+.node .k{font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none}
+.node .k b{background:#f1f5f9;color:var(--ink2);font-weight:600;font-family:var(--sans);font-size:11.5px;border-radius:4px}
+.node .v{font-weight:650;font-size:clamp(20px,2vw,26px);letter-spacing:-.02em;margin-top:8px}
+.node .s{color:var(--muted)}
+@keyframes pulse{50%{background:#eff6ff}}
+.panel{border-radius:12px;padding:18px}
+.panel h3{font-size:15px;font-weight:650;letter-spacing:-.01em}
+.composer textarea{background:#fff;line-height:1.5;padding-top:10px}
+.go{border-radius:8px;font-size:14px}
+.think{background:#f8fafc;color:var(--ink2);border:1px solid var(--line);border-radius:8px}
+.think div.doing i::before{border-color:var(--blue);border-top-color:transparent}
+.think div.done i::before{color:var(--green)}
+.ev{grid-template-columns:10px 1fr;border-radius:8px;padding:9px 8px}
+.ev:hover{background:#f8fafc}
+.ev .dot{width:8px;height:8px;border-radius:50%;background:var(--c,#94a3b8) !important;margin-top:6px}
+@keyframes slide{from{opacity:0;transform:translateY(-4px)}}
+.tabs{background:transparent;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:18px;width:100%}
+.tab{border-radius:0;padding:9px 1px;margin-bottom:-1px;border-bottom:2px solid transparent;font-weight:600}
+.tab.on{background:transparent;box-shadow:none;border-bottom-color:var(--ink)}
+.search input{border-radius:8px}
+.chip{border-radius:6px;box-shadow:inset 0 0 0 1px var(--line2);font-weight:600}
+.chip.on b{color:#cbd5e1}
+.pill{border-radius:6px;font-weight:600;padding:2px 8px}
+.s-review{background:#fef3c7;color:#92400e}.s-pending{background:#dbeafe;color:#1d4ed8}.s-approving{background:#e0e7ff;color:#4338ca}
+.s-sent{background:#f1f5f9;color:#334155}.s-overdue,.s-failed{background:#fee2e2;color:#b91c1c}.s-part{background:#ffedd5;color:#c2410c}
+.s-paid{background:#dcfce7;color:#15803d}.s-cancelled{background:#f1f5f9;color:#64748b}
+.av{border-radius:50%;width:28px;height:28px}
+.idlink{background:#f1f5f9;border-radius:4px;font-weight:600}
+.bar{background:#e5e7eb;height:4px}
+.hchip{background:#eef2ff;color:#4338ca;border-radius:4px}
+.ag-row.r-overdue{box-shadow:inset 3px 0 0 var(--red)} .ag-row.r-review{box-shadow:inset 3px 0 0 #d97706} .ag-row.r-paid{box-shadow:inset 3px 0 0 #059669}
+.stat{background:#fff;border-radius:10px}
+.stat .l{font-size:12.5px;font-weight:600;letter-spacing:0;text-transform:none}
+.stat .v{font-weight:650;font-size:22px}
+.chart{border-radius:10px;background:#fff}
+#shade{background:#0f172a55;backdrop-filter:none}
+#sheet{background:#f8fafc}
+.sh-top{background:#fff}
+.sh-top h3{font-size:16px;font-weight:650}
+.paper{border-radius:10px;border:1px solid var(--line);box-shadow:var(--shadow)}
+.paper::after{display:none}
+.pp-head .t{font-weight:700;font-size:22px;letter-spacing:-.01em}
+.pp-head .n{font-family:var(--sans)}
+.pp-meta span,.pp-bill span,.pp-items th,.pp-total span,.split .lbl{letter-spacing:.02em;font-weight:600}
+.pp-items th{border-bottom:1px solid var(--line2)}
+.pp-items td{border-bottom:1px solid var(--line)}
+.pp-items .r{font-family:var(--sans)}
+.pp-total b{font-weight:700;font-size:26px;letter-spacing:-.02em}
+.ppbtn{background:#ffc439;border-radius:6px}
+.stamp{transform:none;border:1.5px solid currentColor;border-radius:6px;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;opacity:1;mix-blend-mode:normal;background:#fff}
+.stamp.slam{animation:none}
+.sbar{border-radius:8px;height:34px;background:#e5e7eb}
+.sbar .you{background:#0f172a}
+.coin{display:none !important}
+.errors{border-radius:8px;background:#fffbeb;border-color:#fde68a;color:#92400e}
+.sect{font-size:14px;font-weight:650}
+.steps li .b{background:#f1f5f9}
+.bubble{background:#f1f5f9;border-radius:10px;box-shadow:none;padding:10px 12px}
+.bubble::after{display:none}
+.toast{border-radius:8px}
+#judge{border-radius:12px;background:#0f172a}
+#judge .cap .k{color:#93c5fd;letter-spacing:.06em}
+#judge .cap .t{font-weight:600;font-size:15px}
+#judge .dots i.on{background:#fff}
+#judge button{border-radius:8px} #judge button.y{background:#fff;color:#0f172a}
+.spot{box-shadow:0 0 0 2px var(--blue),0 0 0 6px #2563eb22 !important;border-radius:12px}
+#welcome{background:#0f172a99}
+.wcard{border-radius:14px}
+.wcard::before{display:none}
+.wcard h2{font-size:24px;font-weight:700;letter-spacing:-.02em}
+.wflow span{background:#f1f5f9;border-radius:6px;font-weight:600}
+button.orange,button.amber{background:var(--ink)} button.green{background:#047857}
+@media (max-width:820px){ .stamp{font-size:11px;border-width:1.5px} .mark{width:28px;height:28px;font-size:14px} .brand h1{font-size:16px} }
 </style>
 </head>
 <body>
 <header class="top"><div class="in">
   <div class="brand"><div class="mark">S</div><div><h1>Settle</h1><small>Client chat → PayPal invoice → paid → helpers paid</small></div></div>
   <span class="mode" id="modeTag">PayPal Sandbox</span>
-  <button class="yellow" id="judgeBtn" onclick="startTour()">▶ Judge Mode</button>
+  <button class="yellow" id="judgeBtn" onclick="startTour()">Judge Mode</button>
   <button class="line sm" id="runBtn" onclick="runAgent()" title="Check PayPal for payments, pay helpers, nudge overdue clients">⟳ Run agent</button>
   <label class="toggle" title="Run the agent every minute while this page is open" style="margin:0;text-transform:none;letter-spacing:0;font-size:13px"><input type="checkbox" id="auto"><i></i><span>Autopilot</span></label>
-  <button class="line iconbtn" onclick="setKey()" title="Admin key (live sandbox)">🔑</button>
+  <button class="line sm" onclick="setKey()" title="Admin key (live sandbox)">Live key</button>
 </div></header>
 
 <main>
   <section class="hero">
     <div>
-      <h2>Paste the chat. <em>The agent</em> invoices, chases, and splits the money.</h2>
+      <h2>From client chat to paid invoice.</h2>
       <p>AI drafts the invoice from a client conversation, code checks it, you approve, PayPal collects, and helpers get their share the moment the client pays in full.</p>
     </div>
     <span class="asof" id="asof"></span>
   </section>
 
   <section class="ribbon" id="ribbon">
-    <div class="node" data-stage="review"><span class="ic">✨</span><div class="k">AI drafted <b id="c-review">0</b></div><div class="v" id="v-review">$0</div><div class="s" id="s-review">waiting for a quick fix</div></div>
-    <div class="node" data-stage="approve"><span class="ic">✍️</span><div class="k">Your approval <b id="c-approve">0</b></div><div class="v" id="v-approve">$0</div><div class="s" id="s-approve">nothing sends without you</div></div>
-    <div class="node" data-stage="collect"><span class="ic">📨</span><div class="k">With client <b id="c-collect">0</b></div><div class="v" id="v-collect">$0</div><div class="s" id="s-collect">outstanding</div></div>
-    <div class="node" data-stage="done" id="rb-done"><span class="ic">💰</span><div class="k">Collected <b id="c-done">0</b></div><div class="v" id="v-done" style="color:var(--green)">$0</div><div class="s" id="s-done">verified in PayPal</div></div>
-    <div class="node" data-stage="helpers" id="rb-help"><span class="ic">🤝</span><div class="k">Helpers paid <b id="c-help">0</b></div><div class="v" id="v-help" style="color:var(--violet)">$0</div><div class="s" id="s-help">via PayPal Payouts</div></div>
+    <div class="node" data-stage="review"><div class="k">AI drafted <b id="c-review">0</b></div><div class="v" id="v-review">$0</div><div class="s" id="s-review">waiting for a quick fix</div></div>
+    <div class="node" data-stage="approve"><div class="k">Your approval <b id="c-approve">0</b></div><div class="v" id="v-approve">$0</div><div class="s" id="s-approve">nothing sends without you</div></div>
+    <div class="node" data-stage="collect"><div class="k">With client <b id="c-collect">0</b></div><div class="v" id="v-collect">$0</div><div class="s" id="s-collect">outstanding</div></div>
+    <div class="node" data-stage="done" id="rb-done"><div class="k">Collected <b id="c-done">0</b></div><div class="v" id="v-done" style="color:var(--green)">$0</div><div class="s" id="s-done">verified in PayPal</div></div>
+    <div class="node" data-stage="helpers" id="rb-help"><div class="k">Helpers paid <b id="c-help">0</b></div><div class="v" id="v-help" style="color:var(--violet)">$0</div><div class="s" id="s-help">via PayPal Payouts</div></div>
     <div class="flow"></div>
   </section>
 
@@ -299,7 +403,7 @@ body.judging #toasts{bottom:96px}
         <textarea id="chat" placeholder="“Hi! Happy with the plan: logo pack for $300 and 4 social templates at $50 each. Invoice amaka@lagosbloom.co…”"></textarea>
         <label for="note">Private note · helpers to pay from this invoice</label>
         <input id="note" placeholder="split 20% to ada@example.com">
-        <button class="go" id="draftBtn" onclick="draftFromChat()">✨ Draft invoice with AI</button>
+        <button class="go" id="draftBtn" onclick="draftFromChat()">Draft invoice with AI</button>
         <div class="think" id="think"></div>
       </section>
       <section class="panel" id="feedPanel">
@@ -320,8 +424,8 @@ body.judging #toasts{bottom:96px}
           <div class="chips" id="chips"></div>
         </div>
         <div class="toolbar">
-          <button class="soft sm" onclick="bulk('approve')">✍️ Approve selected</button>
-          <button class="soft sm" onclick="bulk('nudge')">🔔 Nudge selected</button>
+          <button class="soft sm" onclick="bulk('approve')">Approve selected</button>
+          <button class="soft sm" onclick="bulk('nudge')">Nudge selected</button>
           <span class="spacer"></span>
           <button class="line sm" onclick="exportCsv()">⬇ CSV</button>
           <button class="line sm" onclick="resetCols()">Reset columns</button>
@@ -388,8 +492,8 @@ body.judging #toasts{bottom:96px}
   <div class="mark" style="position:relative">S</div>
   <h2>Get paid for the work you already agreed.</h2>
   <p>Settle reads a client chat, drafts the invoice with AI, sends it through PayPal after you approve, nudges late payers, and pays your helpers their share automatically.</p>
-  <div class="wflow"><span>💬 Chat</span><em>→</em><span>✨ AI draft</span><em>→</em><span>✍️ You approve</span><em>→</em><span>📨 PayPal</span><em>→</em><span>💰 Paid</span><em>→</em><span>🤝 Helpers paid</span></div>
-  <div class="row"><button class="yellow" onclick="closeWelcome();startTour()">▶ Watch the 40-second demo</button><button class="line" onclick="closeWelcome();setKey()">Connect live sandbox</button></div>
+  <div class="wflow"><span>Chat</span><em>→</em><span>AI draft</span><em>→</em><span>You approve</span><em>→</em><span>PayPal</span><em>→</em><span>Paid</span><em>→</em><span>Helpers paid</span></div>
+  <div class="row"><button class="yellow" onclick="closeWelcome();startTour()">Watch the 40-second demo</button><button class="line" onclick="closeWelcome();setKey()">Connect live sandbox</button></div>
   <div style="text-align:center;margin-top:12px;position:relative"><button class="linkbtn" onclick="closeWelcome();enterDemo(false)">or explore demo data on your own</button></div>
 </div></div>
 
@@ -473,12 +577,12 @@ function countUp(el, to, cur){
 
 /* ============ AG Grid theme ============ */
 const theme = agGrid.themeQuartz.withParams({
-  accentColor: "#0070e0", backgroundColor: "#fffdf8", foregroundColor: "#16181d", borderColor: "#ebe2d2",
-  headerBackgroundColor: "#f6efe2", headerTextColor: "#5f5748", headerFontWeight: 700,
-  rowHoverColor: "#fbf4e6", selectedRowBackgroundColor: "#e7f0fd", oddRowBackgroundColor: "#fffaf2",
-  fontFamily: "Inter,system-ui,sans-serif", fontSize: 13, spacing: 6, wrapperBorderRadius: 14, borderRadius: 8
+  accentColor: "#2563eb", backgroundColor: "#ffffff", foregroundColor: "#0f172a", borderColor: "#e5e7eb",
+  headerBackgroundColor: "#f8fafc", headerTextColor: "#475569", headerFontWeight: 600,
+  rowHoverColor: "#f8fafc", selectedRowBackgroundColor: "#eff6ff", oddRowBackgroundColor: "#ffffff",
+  fontFamily: "Inter,system-ui,sans-serif", fontSize: 13, spacing: 6, wrapperBorderRadius: 10, borderRadius: 6
 });
-const COLORS = ["#0070e0", "#5b3fd0", "#d9620b", "#0f7a4f", "#c8102e", "#0e8ca8", "#8a5200", "#b0306a"];
+const COLORS = ["#334155", "#475569", "#1e40af", "#0f766e", "#6d28d9", "#9f1239", "#92400e", "#3f6212"];
 const avatar = name => { const n = (name || "?").trim() || "?"; let h = 0; for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return `<span class="av" style="background:${COLORS[h % COLORS.length]}">${esc(n.split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase())}</span>`; };
 const canEdit = p => !p.node.rowPinned && EDITABLE.includes(p.data.status);
@@ -521,12 +625,12 @@ const columnDefs = [
   {headerName: "Helper payout", colId: "payout", width: 150, cellDataType: "number",
    valueGetter: p => p.node.rowPinned ? p.data.helperAmount : view(p.data).helperAmount,
    cellRenderer: p => { if (p.node.rowPinned) return fmt(p.value); if (!p.value) return `<span class="muted">–</span>`;
-     const s = p.data.payout_status; const icon = s === "sent" ? "✅" : s === "failed" ? "⚠️" : s === "sending" ? "⏳" : "🕓";
-     return `${icon} ${fmt(p.value, p.data.data.currency)}`; },
+     const s = p.data.payout_status; const tag = s === "sent" ? "Paid out" : s === "failed" ? "Failed" : s === "sending" ? "Sending" : "Scheduled";
+     return `${fmt(p.value, p.data.data.currency)} <small class="muted">${tag}</small>`; },
    tooltipValueGetter: p => p.node.rowPinned ? null : (p.data.payout_batch_id ? "PayPal Payouts batch " + p.data.payout_batch_id : p.data.payout_error || "Pays out automatically after full payment")},
   {headerName: "Nudges", colId: "nudges", width: 110, cellDataType: "number",
    valueGetter: p => p.node.rowPinned ? null : Number(p.data.reminders || 0),
-   cellRenderer: p => p.node.rowPinned ? "" : (p.value ? `🔔 ${p.value} <small class="muted">${ago(p.data.last_reminded)}</small>` : `<span class="muted">0</span>`)},
+   cellRenderer: p => p.node.rowPinned ? "" : (p.value ? `${p.value} <small class="muted">${ago(p.data.last_reminded)}</small>` : `<span class="muted">0</span>`)},
   {headerName: "PayPal invoice", colId: "paypal", field: "paypal_id", minWidth: 210, cellDataType: "text",
    cellRenderer: p => p.node.rowPinned || !p.value ? "" : `<span class="mono" style="font-size:12px">${esc(p.value)}</span>${p.data.pay_url && p.data.pay_url !== "#" ? ` <a href="${esc(p.data.pay_url)}" target="_blank" rel="noopener" title="Client's PayPal pay page">↗</a>` : ""}`},
   {headerName: "Created", colId: "created", field: "created_at", width: 118, cellDataType: "number",
@@ -597,10 +701,10 @@ function showTab(t){
 }
 
 /* ============ activity log grid + feed ============ */
-const EV = {ai: ["✨", "#5b3fd0", "AI draft"], review: ["🩹", "#8a5200", "Needs review"], edited: ["✏️", "#5f5748", "Edited"], drafted: ["📝", "#5f5748", "Drafted"],
-  approved: ["✍️", "#0b55b8", "Approved"], paypal: ["🅿️", "#003087", "PayPal"], sent: ["📨", "#003087", "Sent"], partially_paid: ["🌓", "#a34800", "Part paid"],
-  paid: ["💰", "#0b6a43", "Paid"], payout: ["🤝", "#5b3fd0", "Payout"], nudged: ["🔔", "#d9620b", "AI nudge"], cancelled: ["🗑️", "#7d776c", "Cancelled"],
-  error: ["⚠️", "#c8102e", "Error"], send_failed: ["⚠️", "#c8102e", "Send failed"], check_failed: ["⚠️", "#c8102e", "Check failed"]};
+const EV = {ai: ["", "#5b3fd0", "AI draft"], review: ["", "#8a5200", "Needs review"], edited: ["", "#5f5748", "Edited"], drafted: ["", "#5f5748", "Drafted"],
+  approved: ["", "#0b55b8", "Approved"], paypal: ["", "#003087", "PayPal"], sent: ["", "#003087", "Sent"], partially_paid: ["", "#a34800", "Part paid"],
+  paid: ["", "#0b6a43", "Paid"], payout: ["", "#5b3fd0", "Payout"], nudged: ["", "#d9620b", "AI nudge"], cancelled: ["", "#7d776c", "Cancelled"],
+  error: ["", "#c8102e", "Error"], send_failed: ["", "#c8102e", "Send failed"], check_failed: ["", "#c8102e", "Check failed"]};
 const evOf = k => EV[k] || ["•", "#5f5748", k];
 const logGrid = agGrid.createGrid($("logGrid"), {
   theme, rowData: [], getRowId: p => String(p.data.id),
@@ -621,7 +725,7 @@ function renderFeed(events){
   if (!list.length){ $("feed").innerHTML = `<div class="empty">The agent hasn't done anything yet.</div>`; return; }
   $("feed").innerHTML = list.map(e => { const [ic, col, tag] = evOf(e.kind), fresh = feedPrimed && !seenEv.has(e.id);
     return `<div class="ev${fresh ? " new" : ""}" onclick="${e.draft_id ? `openSheet(${e.draft_id})` : ""}">
-      <div class="dot" style="background:${col}14">${ic}</div>
+      <div class="dot" style="--c:${col}"></div>
       <div><div class="msg">${esc(e.message)}</div><div class="meta"><span class="tag" style="color:${col}">${esc(tag)}</span>${e.draft_id ? `<span>#${e.draft_id}</span>` : ""}<span>${ago(e.at)}</span></div></div></div>`; }).join("");
   list.forEach(e => seenEv.add(e.id)); feedPrimed = true;
 }
@@ -637,10 +741,10 @@ function drawCharts(rows = lastLive, cur = lastCur){
   const out = sum(d => view(d).outstanding) - late;
   const font = {fontFamily: "Inter, sans-serif"};
   const data = [{label: "In draft", value: draft}, {label: "With client", value: out}, {label: "Overdue", value: late}, {label: "Collected", value: coll}];
-  const dOpts = {container: $("donut"), data, background: {fill: "#fffdf8"}, title: {text: "Where the money is", fontSize: 14, fontWeight: "bold", ...font},
+  const dOpts = {container: $("donut"), data, background: {fill: "#ffffff"}, title: {text: "Where the money is", fontSize: 14, fontWeight: "bold", ...font},
     legend: {position: "bottom", item: {label: font}}, padding: {top: 10, bottom: 10},
     series: [{type: "donut", angleKey: "value", legendItemKey: "label", innerRadiusRatio: 0.64,
-      fills: ["#c9bfae", "#0070e0", "#c8102e", "#0f7a4f"], strokeWidth: 3, strokes: ["#fffdf8"], calloutLabel: {enabled: false}, sectorLabel: {enabled: false},
+      fills: ["#cbd5e1", "#2563eb", "#dc2626", "#059669"], strokeWidth: 3, strokes: ["#ffffff"], calloutLabel: {enabled: false}, sectorLabel: {enabled: false},
       innerLabels: [{text: fmt0(draft + out + late + coll, cur), fontSize: 20, fontWeight: "bold", fontFamily: "Fraunces, serif"}, {text: "invoiced", fontSize: 11, color: "#857d6e", ...font}],
       tooltip: {renderer: p => ({heading: p.datum.label, data: [{label: "Amount", value: fmt(p.datum.value, cur)}]})}}]};
   const by = {};
@@ -649,8 +753,8 @@ function drawCharts(rows = lastLive, cur = lastCur){
     by[k].collected += Number(d.paid_amount || 0); by[k].outstanding += v.outstanding;
     if ([...EDITABLE, "approving"].includes(d.status)) by[k].draft += d.total; });
   const bData = Object.values(by).sort((a, b) => (b.collected + b.outstanding + b.draft) - (a.collected + a.outstanding + a.draft)).slice(0, 8);
-  const bOpts = {container: $("bars"), data: bData, background: {fill: "#fffdf8"}, title: {text: "By client", fontSize: 14, fontWeight: "bold", ...font}, legend: {position: "bottom", item: {label: font}},
-    series: [["collected", "Collected", "#0f7a4f"], ["outstanding", "Outstanding", "#0070e0"], ["draft", "In draft", "#c9bfae"]]
+  const bOpts = {container: $("bars"), data: bData, background: {fill: "#ffffff"}, title: {text: "By client", fontSize: 14, fontWeight: "bold", ...font}, legend: {position: "bottom", item: {label: font}},
+    series: [["collected", "Collected", "#059669"], ["outstanding", "Outstanding", "#2563eb"], ["draft", "In draft", "#cbd5e1"]]
       .map(([k, n, f]) => ({type: "bar", xKey: "client", yKey: k, yName: n, stacked: true, fill: f, cornerRadius: 4,
         tooltip: {renderer: p => ({heading: p.datum.client, data: [{label: n, value: fmt(p.datum[k], cur)}]})}})),
     axes: [{type: "category", position: "bottom", label: font}, {type: "number", position: "left", label: {...font, formatter: p => fmt0(p.value, cur)}}]};
@@ -695,7 +799,7 @@ async function refresh(){
     lastLive = live; lastCur = cur; drawCharts();
     if (openId) renderSheet(rows.find(r => r.id === openId), false);
   } catch (e){
-    if (e.auth){ toast("That admin key didn't work. Tap 🔑 to fix it.", "err"); openWelcome(); }
+    if (e.auth){ toast("That admin key didn't work. Tap Live key to fix it.", "err"); openWelcome(); }
     else toast(e.message, "err");
   }
 }
@@ -718,7 +822,7 @@ async function draftFromChat(){
     await refresh(); openSheet(j.id);
     setTimeout(() => $("think").classList.remove("on"), 2500);
   } catch (e){ clearInterval(tick); $("think").classList.remove("on"); if (e.auth) setKey(); else toast(e.message, "err"); }
-  b.disabled = false; b.textContent = "✨ Draft invoice with AI";
+  b.disabled = false; b.textContent = "Draft invoice with AI";
 }
 async function approve(id, ask = true){
   if (ask && !confirm(`Send invoice #${id} to the client through PayPal?`)) return false;
@@ -728,7 +832,7 @@ async function approve(id, ask = true){
 }
 async function nudge(id, ask = true){
   if (ask && !confirm(`Have the AI write a reminder for #${id} and send it through PayPal?`)) return;
-  try { const j = await api(`/drafts/${id}/nudge`, {method: "POST"}); toast(`🔔 #${id}: “${j.note.length > 110 ? j.note.slice(0, 110) + "…" : j.note}”`, "ok"); }
+  try { const j = await api(`/drafts/${id}/nudge`, {method: "POST"}); toast(`#${id}: “${j.note.length > 110 ? j.note.slice(0, 110) + "…" : j.note}”`, "ok"); }
   catch (e){ toast(`#${id}: ${e.message}`, "err"); }
   await refresh();
 }
@@ -811,7 +915,7 @@ const itemsSum = () => rowsOf(itemsGrid).reduce((s, i) => s + (Number(i.quantity
 function itemTotals(){ itemsGrid.setGridOption("pinnedBottomRowData", [{name: "Total", line: itemsSum()}]); helpersGrid.refreshCells({columns: ["gets"], force: true}); helperTotals(); }
 function helperTotals(){
   const pct = rowsOf(helpersGrid).reduce((s, h) => s + (Number(h.percent) || 0), 0);
-  helpersGrid.setGridOption("pinnedBottomRowData", [{email: pct > 100 ? "⚠ Over 100%" : "You keep", percent: 100 - pct}]);
+  helpersGrid.setGridOption("pinnedBottomRowData", [{email: pct > 100 ? "Over 100%" : "You keep", percent: 100 - pct}]);
   livePaper();
 }
 function addItem(){ itemsGrid.applyTransaction({add: [{name: "New item", quantity: 1, unit_amount: 0}]}); itemTotals(); }
@@ -837,9 +941,9 @@ function splitHTML(d, inv){
   const used = sp.reduce((s, x) => s + (Number(x.percent) || 0), 0), keep = 100 - used;
   const segs = sp.map((s, i) => `<div style="flex:${Math.max(Number(s.percent) || 0, 0.01)};background:${["#5b3fd0", "#0e8ca8", "#d9620b", "#b0306a"][i % 4]}" title="${esc(s.email)}">${esc(String(s.email || "helper").split("@")[0])} ${esc(s.percent)}%<span class="amt">&nbsp;· ${fmt0(tot * (Number(s.percent) || 0) / 100, c)}</span></div>`).join("");
   const po = !sp.length ? "No helpers on this invoice." :
-    d.payout_status === "sent" ? `✅ Paid out through PayPal Payouts${d.payout_batch_id ? ` · batch <span class="mono">${esc(d.payout_batch_id)}</span>` : ""}` :
-    d.payout_status === "failed" ? `⚠️ Payout failed: ${esc(d.payout_error || "")}. The agent retries on its next run.` :
-    "🕓 Paid out automatically, once, after PayPal confirms the full amount.";
+    d.payout_status === "sent" ? `Paid out through PayPal Payouts${d.payout_batch_id ? ` · batch <span class="mono">${esc(d.payout_batch_id)}</span>` : ""}` :
+    d.payout_status === "failed" ? `Payout failed: ${esc(d.payout_error || "")}. The agent retries on its next run.` :
+    "Paid out automatically, once, after PayPal confirms the full amount.";
   return `<div class="lbl"><span>Where the money goes</span><span>${fmt(tot, c)}</span></div>
     <div class="sbar">${keep >= 0 ? `<div class="you" style="flex:${Math.max(keep, 0.01)}">You ${keep.toFixed(0)}% · ${fmt0(tot * keep / 100, c)}</div>` : `<div class="over" style="flex:1">Over 100% by ${(-keep).toFixed(0)}%</div>`}${segs}</div>
     <div class="po">${po}</div>`;
@@ -899,9 +1003,9 @@ function renderSheet(d, full){
   if (lastStamp[d.id] !== v.stamp || full){ const st = $("stamp"); if (st){ st.classList.remove("slam"); void st.offsetWidth; st.classList.add("slam"); } lastStamp[d.id] = v.stamp; }
   $("sChat").textContent = d.source_chat || "(created without a chat)";
   let a = "";
-  if (ed) a += `<button class="soft" onclick="saveSheet(false)">Save</button><button class="green" id="sendBtn" onclick="saveSheet(true)">✍️ Approve &amp; send via PayPal</button>`;
-  if (v.unpaid) a += `<button class="orange" onclick="nudge(${d.id})">🔔 AI nudge</button>`;
-  if (v.unpaid && MODE === "demo") a += `<button class="blue" onclick="demoClientPays(${d.id})">💳 Simulate client payment</button>`;
+  if (ed) a += `<button class="soft" onclick="saveSheet(false)">Save</button><button class="green" id="sendBtn" onclick="saveSheet(true)">Approve &amp; send via PayPal</button>`;
+  if (v.unpaid) a += `<button class="orange" onclick="nudge(${d.id})">AI nudge</button>`;
+  if (v.unpaid && MODE === "demo") a += `<button class="blue" onclick="demoClientPays(${d.id})">Simulate client payment</button>`;
   if (!["paid", "cancelled"].includes(d.status)) a += `<button class="danger" onclick="cancelInv(${d.id})">Cancel</button>`;
   $("sActs").innerHTML = a; $("sActs").style.display = a ? "" : "none";
 }
@@ -1073,14 +1177,14 @@ const Demo = (() => {
 })();
 
 async function demoClientPays(id){
-  Demo.clientPays(id); toast(`💳 Client paid #${id} on PayPal. The agent verifies it…`);
+  Demo.clientPays(id); toast(`Client paid #${id} on PayPal. The agent verifies it…`);
   await sleep(700); await runAgent();
 }
 function enterDemo(quiet){
   if (MODE !== "demo"){ MODE = "demo"; Demo.seed(); seenEv.clear(); feedPrimed = false; lastStamp = {}; }
   $("modeTag").textContent = "Judge Mode · demo data"; $("modeTag").classList.add("demo");
   clearInterval(autoTimer); $("auto").checked = false;
-  if (!quiet) toast("Demo data loaded. Nothing here reaches PayPal. Tap ✕ on the Judge bar or 🔑 to go live.");
+  if (!quiet) toast("Demo data loaded. Nothing here reaches PayPal. Tap ✕ on the Judge bar or Live key to go live.");
   showJudgeBar(true, !quiet);
   return refresh();
 }
@@ -1148,7 +1252,7 @@ async function startTour(){
     await step(2, async () => { spot($("composer")); await draftFromChat(); if (!alive(run)) return; spot(null); await wait(1200); if (!alive(run)) return; spot($("split")); await wait(3200); });
     await step(3, async () => { spot($("sendBtn")); await wait(2200); if (!alive(run)) return;
       if (cur && EDITABLE.includes(cur.status)) await saveSheet(true, false); spot($("paper")); await wait(2800); });
-    await step(4, async () => { if (cur) Demo.clientPays(cur.id); spot($("paper")); toast("💳 Amaka paid $500.00 on PayPal"); await wait(2400); });
+    await step(4, async () => { if (cur) Demo.clientPays(cur.id); spot($("paper")); toast("Amaka paid $500.00 on PayPal"); await wait(2400); });
     await step(5, async () => { spot($("runBtn")); await sleep(500); await runAgent(); if (!alive(run)) return; spot($("split")); await wait(4200); });
     await step(6, async () => { closeSheet(); await sleep(350); const late = Demo.rows().find(r => r.status === "sent" && daysLate(r.data.due_date) > 0);
       spot($("feedPanel")); if (late){ late.last_reminded = null; await nudge(late.id, false); } await wait(4800); });
