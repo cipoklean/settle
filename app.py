@@ -149,7 +149,7 @@ def claim(did, token):
         (time.time(), did, h(token), time.time()))
     return cur.rowcount == 1
 
-# ---------- approval pages (email link flow) ----------
+# ---------- approval pages (shareable approval link flow) ----------
 def page(title, body):
     return HTMLResponse(f"""<!doctype html><meta name=viewport content="width=device-width,initial-scale=1">
 <title>{title}</title><body style="font-family:system-ui;max-width:520px;margin:40px auto;padding:0 16px">
@@ -180,7 +180,7 @@ async def approve_submit(did: int, request: Request):
     t = parse_qs((await request.body()).decode()).get("t", [""])[0]
     if not claim(did, t):
         return page("Not sent", "<h2>Link invalid, already used, or expired. Nothing was sent.</h2>")
-    log(did, "approved", "Approved by owner via email link")
+    log(did, "approved", "Approved by owner via approval link")
     pid = send_to_paypal(did)
     return page("Sent", f"<h2>Sent ✅</h2><p>PayPal invoice {html.escape(pid)}</p>")
 

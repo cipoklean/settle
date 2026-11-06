@@ -1,4 +1,4 @@
-"""Settle - step 2 as a module: chat text -> invoice dict -> validation."""
+"""Settle agent: chat text -> invoice dict (LLM), validation (code), reminder text (LLM)."""
 import os, re, json, requests
 from datetime import date
 from dotenv import load_dotenv
@@ -18,9 +18,9 @@ Use only facts stated in the chat. If something is missing, use "" and list it i
 "splits" are helpers the freelancer wants to pay a share to (e.g. "20% to ada@x.com"); use [] if none are mentioned.
 Chat:
 {chat}"""
-    base = os.getenv("AI_BASE_URL", "https://api.twigpine.com/v1").rstrip("/")
-    key = os.getenv("AI_API_KEY") or os.environ["OXION_API_KEY"]
-    model = os.getenv("AI_MODEL", "google/gemini-3.1-flash-lite")
+    base = os.getenv("AI_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
+    key = os.environ["AI_API_KEY"]
+    model = os.getenv("AI_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b")
     r = requests.post(f"{base}/chat/completions", timeout=120,
         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
         json={"model": model, "temperature": 0, "max_tokens": 6000,
@@ -86,9 +86,9 @@ def validate(inv: dict):
     return errors, round(total, 2)
 
 def _chat(prompt, max_tokens=1500):
-    base = os.getenv("AI_BASE_URL", "https://api.twigpine.com/v1").rstrip("/")
-    key = os.getenv("AI_API_KEY") or os.environ["OXION_API_KEY"]
-    model = os.getenv("AI_MODEL", "google/gemini-3.1-flash-lite")
+    base = os.getenv("AI_BASE_URL", "https://integrate.api.nvidia.com/v1").rstrip("/")
+    key = os.environ["AI_API_KEY"]
+    model = os.getenv("AI_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b")
     r = requests.post(f"{base}/chat/completions", timeout=90,
         headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
         json={"model": model, "temperature": 0.4, "max_tokens": max_tokens,
